@@ -211,17 +211,81 @@ You should now have a Messaging service that supports a RCS sender with SMS fall
 
 ---
 
-### Step 3: Create Content Templates Based on Journey Scenes
+### 3. Create Content Templates Based on Journey Scenes
 
 Our TwiliTransit journey follows 6 distinct scenes from Alex's trip. Let's create content templates for each:
 
 **Scene Overview:**
+
 1. **Trip Planning** - Alex decides to visit Signal City Market
 2. **Bus Boarding** - Alex's reminder time arrives  
 3. **Ferry Transfer** - Alex nears the ferry terminal
 4. **Ferry Crossing** - Midway through the ferry ride
 5. **Metro Connection** - Ferry arrives at Riverside Station
 6. **Journey Completion** - Alex arrives at Signal City Market
+
+**Go to Twilio Console -> Messaging -> [Content Template Builder](https://console.twilio.com/us1/develop/sms/content-template-builder).**
+
+#### 3.1. Content Template 1: Trip Planning
+
+**Create a new Content Template:**
+
+- Template Name: `twilitransit_scene_1_trip_planning`
+- Template Language: `English`
+- Content Type: `Carousel`
+
+> [!TIP]
+> Now is a good time to quickly review all the [Content Types options](https://www.twilio.com/docs/content/content-types-overview) available. 
+
+**Dynamic Fallback:** Click Edit dynamic fallback. Select "Text". Continue.
+
+**Configure Content - Carousel:** In the "Carousel" tab:
+
+**Body:**
+
+```text
+Hi {{1}}! Welcome to TwiliTransit! 🚎
+
+Let's get you to {{2}}.
+```
+
+**Card 1:**
+
+- Media URL: `https://forge-assets-5378.twil.io/twilitransit/{{3}}`
+- Card Title: `Trip start`
+- Card Body: `Your trip starts from {{4}}.`
+- Button:
+    - Type of Action: `Quick Reply`
+    - Button text: `Remind me 5 mins before`
+    - ID: `scene_1_reminder_bus`
+
+**Card 2:**
+
+- Media URL: `https://forge-assets-5378.twil.io/twilitransit/{{5}}`
+- Card Title: `Trip end`
+- Card Body: `Your trip ends at {{6}}.`
+- Button:
+    - Type of Action: `Quick Reply`
+    - Button text: `Email me journey plan`
+    - ID: `scene_1_email_journey`
+
+**Text Fallback:** Switch to "Text" tab.
+
+Body:
+
+```text
+Hi {{1}}! Welcome to TwiliTransit! 🚎
+
+Let's get you to {{2}}.
+
+Your trip starts from {{4}} and ends at {{6}}.
+
+Reply with REMIND to get a reminder 5 mins before your bus arrives.
+
+Reply with EMAIL to get the journey plan emailed to you instead.
+```
+
+---
 
 #### Scene 1: Trip Planning Template
 
