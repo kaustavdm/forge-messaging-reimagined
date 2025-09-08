@@ -1,6 +1,7 @@
 # Twilio Forge: Messaging Redefined - Workshop Runbook
 
 ## Pre-requisites
+
 > [!IMPORTANT]  
 > Please complete these steps prior to joining the workshop
 
@@ -14,17 +15,20 @@
 
 ## Workshop Overview
 
-In this 60-minute hands-on lab, you'll build **TwiliTransit** - a multi-modal transportation assistant that guides passengers through a journey from TwiliTown to Signal City Market using rich messaging across RCS, SMS, and WhatsApp.
+In this 60-minute hands-on lab, you'll build **TwiliTransit** - a multi-modal transportation assistant that guides passengers through a journey from TwiliTown to Signal City Market using RCS, while we talk of how other messaging channels like SMS or WhatsApp can be mixed in.
 
 ### What You'll Learn
+
 - Set up and configure RCS messaging with Twilio
 - Create rich content templates using the Content API
-- Build an omnichannel messaging flow with Express.js
+- Designing an Express.js backend for omnichannel communication
 - Implement time-based triggers and interactive quick replies
 - Handle dynamic channel fallback and route management
 
 ### The Journey We'll Build
+
 Follow Alex's transportation journey with rich, contextual messaging at each step:
+
 1. **Trip Planning** - Initial request and bus reminder setup
 2. **Bus Boarding** - Real-time notifications with quick replies
 3. **Ferry Transfer** - Location-aware notifications with QR codes
@@ -34,35 +38,21 @@ Follow Alex's transportation journey with rich, contextual messaging at each ste
 
 ## Useful Links
 
-* [Twilio Content API Documentation](https://www.twilio.com/docs/content)
 * [RCS Rich Messaging Documentation](https://www.twilio.com/docs/messaging/channels/rcs)
+* [RCS Onboarding Guide](https://www.twilio.com/docs/rcs/onboarding)
 * [Messaging Services Documentation](https://www.twilio.com/docs/messaging/services)
-* GitHub - Workshop Assets: *[This repository]*
+* [RCS availability](https://www.twilio.com/docs/rcs/regional)
+* [Assets to use (for demo purposes only)](https://forge-assets-5378.twil.io/index.html)
 
 ---
 
-## Quick Start
+## Build
 
-> [!TIP]
-> **Fast Track Option**: A complete `server.js` file is included in this repository. You can copy it directly and run:
-> 
-> ```bash
-> npm install express dotenv twilio
-> node server.js
-> ```
-> 
-> Then use `POST /setup-templates` to create all content templates at once.
+Let's start with the Build for the workshop.
 
-> [!IMPORTANT]
-> **Before starting**: Make sure you have completed the pre-requisites, especially creating your Messaging Service and adding the SIDs to your `.env` file.
+### 1. Bootstrap
 
-The step-by-step guide below walks through building the application from scratch for learning purposes.
-
----
-
-## Setup
-
-### 1. Project Initialization
+#### 1.1. Project Initialization
 
 Create a new project folder and initialize:
 
@@ -73,29 +63,26 @@ npm pkg set type="module"
 npm install express dotenv twilio
 ```
 
-### 2. Environment Configuration
+#### 1.2. Environment Configuration
 
-Create a `.env` file:
+**Create a `.env` file in the root of the application:**
 
 ```bash
 # Twilio Credentials
-TWILIO_ACCOUNT_SID="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-TWILIO_AUTH_TOKEN="your_auth_token_here"
+TWILIO_ACCOUNT_SID=""
+TWILIO_AUTH_TOKEN=""
 
 # Messaging Service SID (create this in Twilio Console or via API)
-MESSAGING_SERVICE_SID="MGxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-
-# Phone Number SID (your Twilio phone number SID)
-TWILIO_PHONE_NUMBER_SID="PNxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+MESSAGING_SERVICE_SID=""
 
 # Ngrok URL (update after starting ngrok)
-WEBHOOK_URL="https://abc123.ngrok.io"
+WEBHOOK_URL=""
 
 # Server Configuration
 PORT=3000
 ```
 
-### 3. Start Ngrok
+#### 1.3. Start Ngrok
 
 In a separate terminal window:
 
@@ -103,19 +90,20 @@ In a separate terminal window:
 ngrok http 3000
 ```
 
-Update your `.env` file with the ngrok URL.
+Update the `WEBHOOK_URL=""` line in your `.env` file with the ngrok URL.
 
-## Workshop Steps
+#### 1.4. Create the Express Server Boilerplate
 
-### Step 1: Create the Express Server Boilerplate
+**Create `server.js` and add the following code:**
 
-Create `server.js`:
+Setup dotenv, create an expressjs application instance and setup the Twilio client:
 
-```javascript
+```js
 import express from 'express';
 import dotenv from 'dotenv';
 import twilio from 'twilio';
 
+// load keys and values from .env file into env vars
 dotenv.config();
 
 const app = express();
@@ -123,7 +111,11 @@ const port = process.env.PORT || 3000;
 
 // Twilio client setup
 const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+```
 
+Then, add the following code to load expressjs middlewares, leave space for adding more routes, add a `/` route for health check:
+
+```js
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -137,24 +129,87 @@ app.get('/', (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+```
 
+Finally, append the following code to setup and start the server:
+
+```js
+// Start server on specified port
 app.listen(port, () => {
   console.log(`TwiliTransit server running on port ${port}`);
 });
 ```
 
-### Step 2: Set Up Messaging Service (Pre-Workshop Setup)
+You can now start the server with this command:
+
+```bash
+node server.js
+```
+
+> [!TIP]
+> Start the server and test the `/` route
+
+---
+
+### 2. Set Up RCS Sender and Messaging Service
+
+> [!NOTE]
+> This section runs through the [RCS Onboarding guide](https://www.twilio.com/docs/rcs/onboarding). If you already have an RCS Sender, a Messaging Service, and have assigned the RCS Sender to the Messaging Service, you may skip to the next section.
+
+#### 2.1. Create RCS Sender
+
+- Go to Twilio Console -> RCS -> [Senders](https://console.twilio.com/us1/develop/rcs/senders). Click "Create New Sender".
+- Enter Sender Display Name: "TwiliTransit". Continue.
+- On the next page:
+    - Sender display name: `TwiliTransit`
+    - Description: `The best fictional, personalised mass-transit service in town.`
+    - Logo image: [Copy this URL](https://forge-assets-5378.twil.io/twilitransit/logo-224x224.png) (_Right click and copy link_), or download and host [`assets/logo-224x224.png`](assets/logo-224x224.png)
+    - Banner image: [Copy this URL](https://forge-assets-5378.twil.io/twilitransit/banner-1440x448.jpg) (_Right click and copy link_), or download and host [`assets/banner-1440x448.jpg`](assets/banner-1440x448.jpg)
+    - Accent color: Click color palette and add a color
+    - Contact Details: Add your own contact information. Add suitable label. 
+    - Privacy policy: [Copy this URL](https://forge-assets-5378.twil.io/twilitransit/privacy.md)(_Right click and copy link_), or download and host [`assets/privacy.md`](assets/privacy.md)
+    - Terms of Service: [Copy this URL](https://forge-assets-5378.twil.io/twilitransit/tos.md) (_Right click and copy link_), or download and host [`assets/tos.md`](assets/tos.md)
+
+You should see a preview that looks like this:
+
+![RCS Sender Preview](assets/rcs-sender-preview.png)
+
+Click Next. **DO NOT submit the Sender for Carrier Approval.**
+
+#### 2.2. Add device to test the RCS sender
+
+After the Sender is added, go to the Sender settings -> Test -> "Add device to test this sender". If you have a phone with RCS enabled, add the number here.
+
+You will receive an RCS message asking you to confirm that you want to be a tester. Accept that and we are good to go.
+
+#### 2.3. Assign RCS Sender to Messaging Service
+
+Create a Messaging service and assign RCS and SMS senders.
+
+- Go to Twilio Console -> Messaging -> [Services](https://console.twilio.com/us1/develop/sms/services). Click "Create Messaging Service"
+- Step 1: Create Messaging Service
+    - Messaging service friendly name: `TwiliTransit Service`
+    - Select what you want to use Messaging for: `Notify my users`
+    - Next
+- Step 2: Add Senders. Add two senders. One for SMS and another for RCS.
+    - Sender Type: `Phone Number` -> Continue. Select Phone Number -> Add Phone Numbers.
+    - Sender Type: `RCS Sender` -> Continue. Select the TwiliTransit RCS Sender. Add RCS Senders.
+- Step 3: Set up integration
+    - _Leave with default choice for now_
+- Step 4: Add compliance info
+    - Complete Messaging Service Setup
+
+You should now have a Messaging service that supports a RCS sender with SMS fallback, ready to go!
+
+> [!TIP]
+> Try sending a message to your test device.
 
 > [!IMPORTANT]
-> **Before the workshop**, you need to create a Messaging Service and add your phone number to it. This is typically done once during account setup.
+> **Add Messaging Service SID to our application**:  
+> Copy the new Messaging Service SID (`MGxxxxxx...`) from the Messaging Services page.
+> Add it to `.env` -> `MESSAGING_SERVICE_SID=""` line.
 
-#### Option A: Using Twilio Console (Recommended)
-1. Go to [Twilio Console > Messaging > Services](https://console.twilio.com/us1/develop/messaging/services)
-2. Create a new Messaging Service called "TwiliTransit Service"
-3. Set use case to "Mixed" (supports both marketing and notifications)
-4. Add your Twilio phone number to the service
-5. Copy the Messaging Service SID to your `.env` file
-
+---
 
 ### Step 3: Create Content Templates Based on Journey Scenes
 
