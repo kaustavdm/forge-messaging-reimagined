@@ -5,7 +5,7 @@
 > [!IMPORTANT]  
 > Please complete these steps prior to joining the workshop
 
-1. [Node.js](https://nodejs.org/en) (v16 or higher) installed on your machine  
+1. [Node.js](https://nodejs.org/en) (current stable / LTS) installed on your machine  
 2. A Twilio account with an SMS-capable phone number ([Sign up here](https://console.twilio.com/))
 3. Go through the [RCS onboarding guide](https://www.twilio.com/docs/rcs/onboarding) and set up an RCS sender.
 4. Your code editor of choice  
@@ -49,107 +49,6 @@ Follow Alex's transportation journey with rich, contextual messaging at each ste
 ## Build
 
 Let's start with the Build for the workshop.
-
-### 1. Bootstrap
-
-#### 1.1. Project Initialization
-
-Create a new project folder and initialize:
-
-```bash
-mkdir twilitransit && cd twilitransit
-npm init -y
-npm pkg set type="module"
-npm install express dotenv twilio
-```
-
-#### 1.2. Environment Configuration
-
-**Create a `.env` file in the root of the application:**
-
-```bash
-# Twilio Credentials
-TWILIO_ACCOUNT_SID=""
-TWILIO_AUTH_TOKEN=""
-
-# Messaging Service SID (create this in Twilio Console or via API)
-MESSAGING_SERVICE_SID=""
-
-# Ngrok URL (update after starting ngrok)
-WEBHOOK_URL=""
-
-# Server Configuration
-PORT=3000
-```
-
-#### 1.3. Start Ngrok
-
-In a separate terminal window:
-
-```bash
-ngrok http 3000
-```
-
-Update the `WEBHOOK_URL=""` line in your `.env` file with the ngrok URL.
-
-#### 1.4. Create the Express Server Boilerplate
-
-**Create `server.js` and add the following code:**
-
-Setup dotenv, create an expressjs application instance and setup the Twilio client:
-
-```js
-import express from 'express';
-import dotenv from 'dotenv';
-import twilio from 'twilio';
-
-// load keys and values from .env file into env vars
-dotenv.config();
-
-const app = express();
-const port = process.env.PORT || 3000;
-
-// Twilio client setup
-const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-```
-
-Then, add the following code to load expressjs middlewares, leave space for adding more routes, add a `/` route for health check:
-
-```js
-// Middleware
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
-// Routes will be added here
-
-// Health check
-app.get('/', (req, res) => {
-  res.json({ 
-    status: 'TwiliTransit API is running',
-    timestamp: new Date().toISOString()
-  });
-});
-```
-
-Finally, append the following code to setup and start the server:
-
-```js
-// Start server on specified port
-app.listen(port, () => {
-  console.log(`TwiliTransit server running on port ${port}`);
-});
-```
-
-You can now start the server with this command:
-
-```bash
-node server.js
-```
-
-> [!TIP]
-> Start the server and test the `/` route
-
----
 
 ### 2. Set Up RCS Sender and Messaging Service
 
