@@ -1,47 +1,55 @@
 # Twilio Forge: Messaging Redefined - Workshop Runbook
 
+In this approx. 60-minute hands-on lab, you'll build TwiliTransit - a fictional multi-modal transportation assistant that guides passengers through their journeys' stages using [Twilio RCS Business Messaging](https://www.twilio.com/docs/rcs). We will discuss how other messaging channels like SMS, WhatsApp, or even Email can be mixed in to deliver an omnichannel experience for your customers.
+
 ## Pre-requisites
 
-> [!IMPORTANT]  
+> [!TIP]  
 > Please complete these steps prior to joining the workshop
 
-1. [Node.js](https://nodejs.org/en) (current stable / LTS) installed on your machine  
-2. A Twilio account with an SMS-capable phone number ([Sign up here](https://console.twilio.com/))
-3. Go through the [RCS onboarding guide](https://www.twilio.com/docs/rcs/onboarding) and set up an RCS sender.
-4. Your code editor of choice  
-5. The [ngrok](https://ngrok.com/) tunneling service (or other tunneling service)
-6. A modern smartphone with RCS capabilities for testing
-7. Basic understanding of Twilio Messaging APIs and Messaging Services
+1. A Twilio account with an SMS-capable phone number ([Sign up here](https://console.twilio.com/)).
+2. Go through the [RCS onboarding guide](https://www.twilio.com/docs/rcs/onboarding) and set up an RCS sender.
+3. A smartphone with RCS capabilities for testing.
+4. Basic understanding of Twilio Messaging APIs and Messaging Services.
+5. The REST API client of your choice. This workshop uses Postman.
+5. Node.js (current stable / LTS) installed on your machine.
+6. Your code editor of choice.
+7. The [ngrok](https://ngrok.com/) tunneling service (or other tunneling service).
+
+---
 
 ## Workshop Overview
-
-In this 60-minute hands-on lab, you'll build **TwiliTransit** - a multi-modal transportation assistant that guides passengers through a journey from TwiliTown to Signal City Market using RCS, while we talk of how other messaging channels like SMS or WhatsApp can be mixed in.
 
 ### What You'll Learn
 
 - Set up and configure RCS messaging with Twilio
-- Create rich content templates using the Content API
-- Designing an Express.js backend for omnichannel communication
-- Implement time-based triggers and interactive quick replies
-- Handle dynamic channel fallback and route management
+- Create rich content templates using the Content Template Builder and the Content API
+- Send RCS messages using the Twilio REST API
+- Send RCS message from an Express.js backend
+- Dynamic fallback for RCS
 
 ### The Journey We'll Build
 
-Follow Alex's transportation journey with rich, contextual messaging at each step:
+**Story:** In the fictional city of Owl Harbour, Alex decides to visit Signal City Market from TwiliTown. The city's integrated multi-modal mass transit system, TwiliTransit, plans and guides Alex through the journey as Alex goes from a Bus to a Ferry to a Metro, with rich, contextual messaging at each step.
 
-1. **Trip Planning** - Initial request and bus reminder setup
-2. **Bus Boarding** - Real-time notifications with quick replies
-3. **Ferry Transfer** - Location-aware notifications with QR codes
-4. **Ferry Crossing** - Mid-journey engagement and next-step preparation
-5. **Metro Connection** - Transfer guidance with rideshare options
-6. **Journey Completion** - Trip summary and feedback collection
+<details>
+<summary><strong>Scene details</strong></summary>
 
-## Useful Links
+1. **Trip planning:** Alex texts "Plan my trip to Signal City Market" to the TwiliTransit number, and receives a journey plan. The journey begins with a walk to the TwiliTown Main St. Bus stop to board a bus to the Ferry. Alex also receives with an option for a reminder before the bus arrives.
+2. **Bus journey:** Alex's bus boarding reminder time arrives. Alex receives a reminder text asking to confirm if Alex has reached the bus stop. Then, Alex receives the details of the bay where the bus will arrive.
+3. **Ferry Transfer:** As Alex's bus journey is about to end, and Alex nears the Ferry terminal, Alex receives a boarding pass QR code for the Ferry, and directions from the bus to the Ferry docks.
+4. **Metro transfer** - As the Ferry journey is about to end, Alex receives a message with Metro arrival/depature timing, platform and route map, along with an option to book rideshare once the metro ride ends.
+5. **Journey Completio:** As the Metro ride ends, Alex receives a trip summary with receipts.
+
+</details>
+
+### Useful Links
 
 * [RCS Rich Messaging Documentation](https://www.twilio.com/docs/messaging/channels/rcs)
 * [RCS Onboarding Guide](https://www.twilio.com/docs/rcs/onboarding)
 * [Messaging Services Documentation](https://www.twilio.com/docs/messaging/services)
 * [RCS availability](https://www.twilio.com/docs/rcs/regional)
+* [Twilio API Message Resource](https://www.twilio.com/docs/messaging/api/message-resource)
 * [Assets to use (for demo purposes only)](https://forge-assets-5378.twil.io/index.html)
 
 ---
@@ -136,8 +144,6 @@ Our TwiliTransit journey follows 6 distinct scenes from Alex's trip. Let's creat
 > [!TIP]
 > Now is a good time to quickly review all the [Content Types options](https://www.twilio.com/docs/content/content-types-overview) available. 
 
-**Dynamic Fallback:** Click Edit dynamic fallback. Select "Text". Continue.
-
 **Configure Content - Carousel:** In the "Carousel" tab:
 
 **Body:**
@@ -168,6 +174,9 @@ Let's get you to {{2}}.
     - Button text: `Email me journey plan`
     - ID: `scene_1_email_journey`
 
+
+**Dynamic Fallback:** Click Edit dynamic fallback. Select "Text". Continue.
+
 **Text Fallback:** Switch to "Text" tab.
 
 Body:
@@ -182,6 +191,38 @@ Your trip starts from {{4}} and ends at {{6}}.
 Reply with REMIND to get a reminder 5 mins before your bus arrives.
 
 Reply with EMAIL to get the journey plan emailed to you instead.
+```
+
+#### 3.2. Content Template 2: Reminder Trigger
+
+**Create a new Content Template:**
+
+- Template Name: `twilitransit_scene_2_reminder_trigger`
+- Template Language: `English`
+- Content Type: `Card`
+
+**Configure Content - Card:** In the "Card" tab:
+
+- Card Title: `Let us know when you arrive at {{1}}.`
+- Subtitle: `Choose one option.`
+- Media URL: _leave blank_
+- Button 1:
+    - Type of Action: `Quick Reply`
+    - Button text: `Yes, I am here`
+    - ID: `scene_2_yes`
+- Button 2:
+    - Type of Action: `Quick Reply`
+    - Button text: `No, I changed my plans`
+    - ID: `no`
+
+**Dynamic Fallback:** Click Edit dynamic fallback. Select "Text". Continue.
+
+**Text Fallback:** Switch to "Text" tab.
+
+Body:
+
+```text
+
 ```
 
 ---
