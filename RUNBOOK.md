@@ -12,6 +12,7 @@ In this approx. 60-minute hands-on lab, you'll build TwiliTransit - a fictional 
 3. A smartphone with RCS capabilities for testing.
 4. Basic understanding of Twilio Messaging APIs and Messaging Services.
 5. The REST API client of your choice. This workshop uses Postman.
+    - If using Postman, download the [Postman collection](./Twilio%20Forge-%20Messaging%20Reimagined.postman_collection.json) and the [Postman environment](./Forge-%20Messaging%20Reimagined.postman_environment.json) files and import them in Postman.
 5. Node.js (current stable / LTS) installed on your machine.
 6. Your code editor of choice.
 7. The [ngrok](https://ngrok.com/) tunneling service (or other tunneling service).
@@ -50,20 +51,21 @@ In this approx. 60-minute hands-on lab, you'll build TwiliTransit - a fictional 
 * [Messaging Services Documentation](https://www.twilio.com/docs/messaging/services)
 * [RCS availability](https://www.twilio.com/docs/rcs/regional)
 * [Twilio API Message Resource](https://www.twilio.com/docs/messaging/api/message-resource)
+* [Postman Collection for this workshop](./Twilio%20Forge-%20Messaging%20Reimagined.postman_collection.json)
 * [Assets to use (for demo purposes only)](https://forge-assets-5378.twil.io/index.html)
 
 ---
 
 ## Build
 
-Let's start with the Build for the workshop.
+Let's start with the Build session for the workshop.
 
-### 2. Set Up RCS Sender and Messaging Service
+### 1. Set Up RCS Sender and Messaging Service
 
 > [!NOTE]
 > This section runs through the [RCS Onboarding guide](https://www.twilio.com/docs/rcs/onboarding). If you already have an RCS Sender, a Messaging Service, and have assigned the RCS Sender to the Messaging Service, you may skip to the next section.
 
-#### 2.1. Create RCS Sender
+#### 1.1. Create RCS Sender
 
 - Go to Twilio Console -> RCS -> [Senders](https://console.twilio.com/us1/develop/rcs/senders). Click "Create New Sender".
 - Enter Sender Display Name: "TwiliTransit". Continue.
@@ -83,13 +85,13 @@ You should see a preview that looks like this:
 
 Click Next. **DO NOT submit the Sender for Carrier Approval.**
 
-#### 2.2. Add device to test the RCS sender
+#### 1.2. Add device to test the RCS sender
 
 After the Sender is added, go to the Sender settings -> Test -> "Add device to test this sender". If you have a phone with RCS enabled, add the number here.
 
 You will receive an RCS message asking you to confirm that you want to be a tester. Accept that and we are good to go.
 
-#### 2.3. Assign RCS Sender to Messaging Service
+#### 1.3. Assign RCS Sender to Messaging Service
 
 Create a Messaging service and assign RCS and SMS senders.
 
@@ -108,19 +110,28 @@ Create a Messaging service and assign RCS and SMS senders.
 
 You should now have a Messaging service that supports a RCS sender with SMS fallback, ready to go!
 
-> [!TIP]
-> Try sending a message to your test device.
+### 1.4. Your first RCS message
+
+> [!NOTE]
+> Use the requests in the "Prequel" folder of the [Postman collection](./Twilio%20Forge-%20Messaging%20Reimagined.postman_collection.json).
+> Make sure to update the Postman environment's current value fields.
+
+- Trigger a request using the `Message` resource of the Twilio REST API. 
+    - In the Postman collection, trigger "Prequel" -> "Your First RCS Message"
+    - If the phone number in `To` field does not support RCS, it will get a SMS.
+- Trigger another request to demonstrate disabling fallback to SMS even when fallback is enabled in the Messaging Service.
+    - In the Postman collection, trigger "Prequel" -> "Your First RCS Message - without fallback"
+    - Note the use of `rcs:` prefix in the `To` field.
 
 > [!IMPORTANT]
-> **Add Messaging Service SID to our application**:  
-> Copy the new Messaging Service SID (`MGxxxxxx...`) from the Messaging Services page.
-> Add it to `.env` -> `MESSAGING_SERVICE_SID=""` line.
+> **DEMO:** Show the messages received on the given phone number.
 
 ---
 
-### 3. Create Content Templates Based on Journey Scenes
 
-Our TwiliTransit journey follows 6 distinct scenes from Alex's trip. Let's create content templates for each:
+### 2. Create Content Templates Based on Journey Scenes
+
+Our TwiliTransit journey follows 5 distinct scenes from Alex's trip. Let's create content templates for each:
 
 **Scene Overview:**
 

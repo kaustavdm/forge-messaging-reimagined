@@ -1,0 +1,290 @@
+{
+	"info": {
+		"_postman_id": "f753c351-1bce-40bf-afd7-4a23cafc126a",
+		"name": "Twilio Forge: Messaging Reimagined",
+		"description": "Follow-along Postman Collection for the requests sent as part of the Twilio Forge: Messaging Reimagined webinar.\n\n## Setup\n\n- You will need an activated Twilio account.\n    \n- Create an [API Key from the Twilio Console](https://www.twilio.com/docs/iam/api-keys/keys-in-console). Consider creating a Restricted key with only the service you need. You can alternately create an [API key using the REST API](https://www.twilio.com/docs/iam/api-keys/key-resource-v1).\n    \n- Add the API Key and Secret to the environment.\n    \n- Get the Account SID from the Twilio Console homepage and add it to the environment.\n    \n- Follow the [Runbook's setup instructions](https://github.com/kaustavdm/forge-messaging-reimagined/blob/dev/RUNBOOK.md#build) and create additional resources.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "43445318",
+		"_collection_link": "https://twilio.postman.co/workspace/Twilio-Forge~2791449a-da04-4afd-bcd5-e90b36cd5508/collection/43445318-f753c351-1bce-40bf-afd7-4a23cafc126a?action=share&source=collection_link&creator=43445318"
+	},
+	"item": [
+		{
+			"name": "Prequel",
+			"item": [
+				{
+					"name": "Your First RCS Message",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "From",
+									"value": "{{MESSAGING_SERVICE_SID}}",
+									"description": "Messaging service SID beginning with `MG`",
+									"type": "text"
+								},
+								{
+									"key": "To",
+									"value": "{{TO}}",
+									"description": "Phone number to send message to",
+									"type": "text"
+								},
+								{
+									"key": "Body",
+									"value": "Hi from the Twilio Forge session on RCS!",
+									"description": "Sample body to text",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"twilio",
+								"com"
+							],
+							"path": [
+								"2010-04-01",
+								"Accounts",
+								"{{ACCOUNT_SID}}",
+								"Messages.json"
+							]
+						},
+						"description": "Send an RCS message with a message string in the `Body`.\n\nUsing a Messaging Service with an RCS Sender attached, and SMS fallback configured, this request will send the simple text as RCS if the receiving phone supports RCS, else it will be delivered as a SMS."
+					},
+					"response": []
+				},
+				{
+					"name": "Your First RCS Message - without fallback",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "From",
+									"value": "{{MESSAGING_SERVICE_SID}}",
+									"description": "Messaging service SID beginning with `MG`",
+									"type": "text"
+								},
+								{
+									"key": "To",
+									"value": "rcs:{{TO}}",
+									"description": "Phone number to send message to, prefixed with `rcs:`",
+									"type": "text"
+								},
+								{
+									"key": "Body",
+									"value": "Hi from the Twilio Forge session on RCS! This time without SMS fallback!",
+									"description": "Sample body to text",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"twilio",
+								"com"
+							],
+							"path": [
+								"2010-04-01",
+								"Accounts",
+								"{{ACCOUNT_SID}}",
+								"Messages.json"
+							]
+						},
+						"description": "Send an RCS message with a message string in the `Body`, with Messaging Service without triggering fallback.\n\nEven while using a Messaging Service with a SMS fallback configured, you can explicitly disable SMS fallback by prefixing the phone number in `To` field with `rcs:`"
+					},
+					"response": []
+				}
+			],
+			"description": "The first step to trigger after setting up a RCS Sender, adding the RCS Sender to a Messaging Service, and adding a SMS fallback for the Messaging Service."
+		},
+		{
+			"name": "Scene 1",
+			"item": [
+				{
+					"name": "Scene 1 - Send initial message reply",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
+									"    \"1\": \"Dan\",",
+									"    // \"2\": \"\",",
+									"    // \"3\": \"\",",
+									"    // \"4\": \"\",",
+									"    // \"5\": \"\",",
+									"    // \"6\": \"\",",
+									"}))"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "From",
+									"value": "{{MESSAGING_SERVICE_SID}}",
+									"type": "text"
+								},
+								{
+									"key": "To",
+									"value": "{{TO}}",
+									"type": "text"
+								},
+								{
+									"key": "ContentSid",
+									"value": "{{CONTENT_SID_SCENE_1}}",
+									"type": "text"
+								},
+								{
+									"key": "ContentVariables",
+									"value": "{{CONTENT_VARIABLES}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"twilio",
+								"com"
+							],
+							"path": [
+								"2010-04-01",
+								"Accounts",
+								"{{ACCOUNT_SID}}",
+								"Messages.json"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Alex has begun their journey."
+		},
+		{
+			"name": "Scene 2",
+			"item": [
+				{
+					"name": "Scene 2 - Reminder Triggered",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
+									"    \"1\": \"Main St. Bus Stop\"",
+									"}))"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "From",
+									"value": "{{MESSAGING_SERVICE_SID}}",
+									"type": "text"
+								},
+								{
+									"key": "To",
+									"value": "{{TO}}",
+									"type": "text"
+								},
+								{
+									"key": "ContentSid",
+									"value": "{{CONTENT_SID_SCENE_2}}",
+									"type": "text"
+								},
+								{
+									"key": "ContentVariables",
+									"value": "{{CONTENT_VARIABLES}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"twilio",
+								"com"
+							],
+							"path": [
+								"2010-04-01",
+								"Accounts",
+								"{{ACCOUNT_SID}}",
+								"Messages.json"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Alex is on their way to Main St. Bus Stop."
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "username",
+				"value": "{{TWILIO_API_KEY_SID}}",
+				"type": "string"
+			},
+			{
+				"key": "password",
+				"value": "{{TWILIO_API_KEY_SECRET}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
