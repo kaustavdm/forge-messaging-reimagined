@@ -1,6 +1,6 @@
 # Twilio Forge: Messaging Redefined - Workshop Runbook
 
-In this approx. 60-minute hands-on lab, you'll build TwiliTransit - a fictional multi-modal transportation assistant that guides passengers through their journeys' stages using [Twilio RCS Business Messaging](https://www.twilio.com/docs/rcs). We will discuss how other messaging channels like SMS, WhatsApp, or even Email can be mixed in to deliver an omnichannel experience for your customers.
+In this approx. 60-minute hands-on lab, you'll build the RCS messages for TwiliTransit - a fictional multi-modal transportation assistant that guides passengers through their journeys' stages using [Twilio RCS Business Messaging](https://www.twilio.com/docs/rcs). We will discuss how other messaging channels like SMS, WhatsApp, or even Email can be mixed in to deliver an omnichannel experience for your customers.
 
 ## Pre-requisites
 
@@ -13,9 +13,6 @@ In this approx. 60-minute hands-on lab, you'll build TwiliTransit - a fictional 
 4. Basic understanding of Twilio Messaging APIs and Messaging Services.
 5. The REST API client of your choice. This workshop uses Postman.
     - If using Postman, download the [Postman collection](./Twilio%20Forge-%20Messaging%20Reimagined.postman_collection.json) and the [Postman environment](./Forge-%20Messaging%20Reimagined.postman_environment.json) files and import them in Postman.
-5. Node.js (current stable / LTS) installed on your machine.
-6. Your code editor of choice.
-7. The [ngrok](https://ngrok.com/) tunneling service (or other tunneling service).
 
 ---
 
