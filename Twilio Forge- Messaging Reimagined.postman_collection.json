@@ -378,6 +378,136 @@
 				}
 			],
 			"description": "Alex has begun their journey, and receives a journey plan over RCS. The journey begins with a walk to the TwiliTown Main St. Bus stop to board a bus to the Ferry. Alex also receives with an option for a reminder before the bus arrives."
+		},
+		{
+			"name": "Scene 2",
+			"item": [
+				{
+					"name": "Scene 2 Content Templates",
+					"item": [
+						{
+							"name": "Create Content Template - Reminder",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successful\", function () {",
+											"    pm.response.to.be.success;",
+											"});",
+											"",
+											"pm.test(\"Response has valid JSON with sid\", function () {",
+											"    pm.response.to.be.json;",
+											"    const responseJson = pm.response.json();",
+											"    pm.expect(responseJson).to.have.property('sid');",
+											"    ",
+											"    // Store the sid in environment variable",
+											"    pm.environment.set(\"CONTENT_SID_SCENE_2_1\", responseJson.sid);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"friendly_name\": \"twilitransit_scene_2_1_reminder\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Alex\",\n        \"bus_number\": \"12A\",\n        \"bus_bay\": \"2\",\n        \"start_loc\": \"Main St. Bus Stop\"\n    },\n    \"types\": {\n        \"twilio/card\": {\n            \"title\": \"🚌 Bus alert for {{name}}\",\n            \"body\": \"Your bus (#{{bus_number}}) is arriving in 5 minutes at bus bay {{bus_bay}}.\",\n            \"subtitle\": \"Let us know once you arrive at {{start_loc}}.\",\n            \"actions\": [\n                {\n                    \"type\": \"QUICK_REPLY\",\n                    \"id\": \"btn_2_1_yes\",\n                    \"title\": \"Yes, I'm here\"\n                },\n                {\n                    \"type\": \"QUICK_REPLY\",\n                    \"id\": \"btn_2_1_no\",\n                    \"title\": \"No, I changed my plans\"\n                }\n            ]\n        },\n        \"twilio/text\": {\n            \"body\": \"{{name}}, your bus (#{{bus_numer}}) arrives in 5 minutes at bus bay {{bus_bay}}.\\n\\nReply 'Yes, I'm here' when you arrive at {{start_loc}}  or 'No, I changed my plans' if needed.\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://content.twilio.com/v1/Content",
+									"protocol": "https",
+									"host": [
+										"content",
+										"twilio",
+										"com"
+									],
+									"path": [
+										"v1",
+										"Content"
+									]
+								},
+								"description": "The Carousel Content Type in RCS does not support the `Body` field. So, we can add another message that we can trigger without fallback. We can trigger an RCS message with this content template in our application before the carousel message."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Scene 2 - Send reminder",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
+									"    \"name\": \"Dan\",",
+									"    \"start_loc\": \"Main St. Bus Stop\",",
+									"    \"bus_number\": \"1B\",",
+									"    \"bus_bay\": \"1\"",
+									"}));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "From",
+									"value": "{{MESSAGING_SERVICE_SID}}",
+									"type": "text"
+								},
+								{
+									"key": "To",
+									"value": "{{TO}}",
+									"type": "text"
+								},
+								{
+									"key": "ContentSid",
+									"value": "{{CONTENT_SID_SCENE_2_1}}",
+									"type": "text"
+								},
+								{
+									"key": "ContentVariables",
+									"value": "{{CONTENT_VARIABLES}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"twilio",
+								"com"
+							],
+							"path": [
+								"2010-04-01",
+								"Accounts",
+								"{{ACCOUNT_SID}}",
+								"Messages.json"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Alex is already on their way to the Bus Stop. Alex's reminder time arrives. Let's create two more templates. The first will be the reminder template, asking Alex is if they are already on their way. The second one will be sent if Alex answers yes."
 		}
 	],
 	"auth": {
