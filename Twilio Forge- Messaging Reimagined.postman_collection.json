@@ -769,6 +769,133 @@
 				}
 			],
 			"description": "**Metro transfer:**\n\nAs Alex's ferry is about to dock at Riverside Station, Alex receives directions to the Metro train that will take them to Signal City Market, along with option to book rideshare."
+		},
+		{
+			"name": "Scene 5",
+			"item": [
+				{
+					"name": "Scene 5 Content Templates",
+					"item": [
+						{
+							"name": "Create Content Template - Trip summary",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successful\", function () {",
+											"    pm.response.to.be.success;",
+											"});",
+											"",
+											"pm.test(\"Response has valid JSON with sid\", function () {",
+											"    pm.response.to.be.json;",
+											"    const responseJson = pm.response.json();",
+											"    pm.expect(responseJson).to.have.property('sid');",
+											"    ",
+											"    // Store the sid in environment variable",
+											"    pm.environment.set(\"CONTENT_SID_SCENE_5_1\", responseJson.sid);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"friendly_name\": \"twilitransit_scene_4_1_metro_transfer\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Alex\",\n        \"trip_summary_pdf\": \"trip-summary.pdf\"\n    },\n    \"types\": {\n        \"twilio/card\": {\n            \"title\": \"🏁 Trip summary for {{name}}\",\n            \"body\": \"You are almost at your destination. Hope you had a pleasant journey.\\n\\nHow was your experience?\",\n            \"media\": [\n                \"https://forge-assets-5378.twil.io/twilitransit/{{trip_summary_pdf}}\"\n            ],\n            \"actions\": [\n                {\n                    \"type\": \"QUICK_REPLY\",\n                    \"id\": \"btn_5_1_excellent\",\n                    \"title\": \"Excellent\"\n                },\n                {\n                    \"type\": \"QUICK_REPLY\",\n                    \"id\": \"btn_5_1_average\",\n                    \"title\": \"Average\"\n                },\n                {\n                    \"type\": \"QUICK_REPLY\",\n                    \"id\": \"btn_5_1_poor\",\n                    \"title\": \"Poor\"\n                }\n            ]\n        },\n        \"twilio/text\": {\n            \"body\": \"You are almost at your destination. Hope you had a pleasant journey.\\n\\nTrip summary: https://forge-assets-5378.twil.io/twilitransit/{{trip_summary_pdf}}\\n\\nHow was your experience? Reply with Excellent, Average or Poor.\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://content.twilio.com/v1/Content",
+									"protocol": "https",
+									"host": [
+										"content",
+										"twilio",
+										"com"
+									],
+									"path": [
+										"v1",
+										"Content"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Scene 5 - Send trip summary",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
+									"    \"name\": \"Alex\",",
+									"    \"trip_summary_pdf\": \"trip-summary.pdf\"",
+									"}));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "From",
+									"value": "{{MESSAGING_SERVICE_SID}}",
+									"type": "text"
+								},
+								{
+									"key": "To",
+									"value": "{{TO}}",
+									"type": "text"
+								},
+								{
+									"key": "ContentSid",
+									"value": "{{CONTENT_SID_SCENE_5_1}}",
+									"type": "text"
+								},
+								{
+									"key": "ContentVariables",
+									"value": "{{CONTENT_VARIABLES}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"twilio",
+								"com"
+							],
+							"path": [
+								"2010-04-01",
+								"Accounts",
+								"{{ACCOUNT_SID}}",
+								"Messages.json"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "**Journey wrap-up:**\n\nAlex is about to reach Signal City Market, and receives the trip summary and receipt as a final message."
 		}
 	],
 	"auth": {

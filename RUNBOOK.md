@@ -496,7 +496,59 @@ In the Postman collection:
 What we have so far:
 
 - [ ] Created a Carousel content template with media using the Twilio Content API
-- [ ] Showcased using Carousel to prompte additional / related services
+- [ ] Showcased using Carousel to promote additional / related services
 - [ ] Add `URL` action button
+
+---
+
+### 6. Scene 5: Journey wrap-up
+
+Alex is about to reach Signal City Market, and receives the trip summary and receipt as a final message, along with options to give quick feedback on the journey.
+
+Let's create one more template using the Twilio Content API. This will be another card, except we will use a PDF url as the `media`.
+
+#### 6.1. Create a Card template with PDF for media using Twilio Content API
+
+<details>
+<summary>View detailed steps</summary>
+
+In the Postman collection:
+
+- Open "Scene 5" -> "Scene 5 Content Templates" -> "Create Content Template - Trip summary"
+- Look at the JSON payload, and see how the `types` object is described.
+    - Update the PDF URL if needed. (you may want to make the whole media url as a variable)
+- Send request.
+- If request is successful, the value of the environment variable `CONTENT_SID_SCENE_5_1` will be updated with the new content template's SID.
+
+</details>
+
+#### 6.2. Send Scene 5 message using Twilio Messaging API
+
+Now, with the content template created, send the message.
+
+<details>
+<summary>View detailed steps</summary>
+
+In the Postman collection:
+
+- Open "Scene 5" -> "Scene 5 - Send trip summary"
+- Update the variables in the request's Pre-request Script as needed
+    - Update the PDF URL if needed.
+- Send request.
+
+</details>
+
+> [!IMPORTANT]
+> **DEMO:** Show the messages sent in this scene.
+
+#### 6.3. Review
+
+> [!TIP]
+> Let's review what we have built in this section.
+
+What we have so far:
+
+- [ ] Used PDF as media for Card template
+- [ ] Wrapping up a user journey with feedback options
 
 ---
