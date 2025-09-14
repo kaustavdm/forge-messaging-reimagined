@@ -1,0 +1,420 @@
+{
+	"info": {
+		"_postman_id": "55972bd7-8d2d-4c54-b864-a9a58d4c8362",
+		"name": "Twilio Forge: Messaging Reimagined",
+		"description": "Follow-along Postman Collection for the requests sent as part of the Twilio Forge: Messaging Reimagined webinar.\n\n## Setup\n\n- You will need an activated Twilio account.\n    \n- Create an [API Key from the Twilio Console](https://www.twilio.com/docs/iam/api-keys/keys-in-console). Consider creating a Restricted key with only the service you need. You can alternately create an [API key using the REST API](https://www.twilio.com/docs/iam/api-keys/key-resource-v1).\n    \n- Add the API Key and Secret to the environment.\n    \n- Get the Account SID from the Twilio Console homepage and add it to the environment.\n    \n- Follow the [Runbook's setup instructions](https://github.com/kaustavdm/forge-messaging-reimagined/blob/dev/RUNBOOK.md#build) and create additional resources.\n    \n\n### Story\n\nIn the fictional city of Owl Harbour, Alex decides to visit Signal City Market from TwiliTown. The city's integrated multi-modal mass transit system, TwiliTransit, plans and guides Alex through the journey as Alex goes from a Bus to a Ferry to a Metro, with rich, contextual messaging at each step.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "43445318"
+	},
+	"item": [
+		{
+			"name": "Prequel",
+			"item": [
+				{
+					"name": "Your First RCS Message",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "From",
+									"value": "{{MESSAGING_SERVICE_SID}}",
+									"description": "Messaging service SID beginning with `MG`",
+									"type": "text"
+								},
+								{
+									"key": "To",
+									"value": "{{TO}}",
+									"description": "Phone number to send message to",
+									"type": "text"
+								},
+								{
+									"key": "Body",
+									"value": "Hi from the Twilio Forge session on RCS!",
+									"description": "Sample body to text",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"twilio",
+								"com"
+							],
+							"path": [
+								"2010-04-01",
+								"Accounts",
+								"{{ACCOUNT_SID}}",
+								"Messages.json"
+							]
+						},
+						"description": "Send an RCS message with a message string in the `Body`.\n\nUsing a Messaging Service with an RCS Sender attached, and SMS fallback configured, this request will send the simple text as RCS if the receiving phone supports RCS, else it will be delivered as a SMS."
+					},
+					"response": []
+				},
+				{
+					"name": "Your First RCS Message - without fallback",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "From",
+									"value": "{{MESSAGING_SERVICE_SID}}",
+									"description": "Messaging service SID beginning with `MG`",
+									"type": "text"
+								},
+								{
+									"key": "To",
+									"value": "rcs:{{TO}}",
+									"description": "Phone number to send message to, prefixed with `rcs:`",
+									"type": "text"
+								},
+								{
+									"key": "Body",
+									"value": "Hi from the Twilio Forge session on RCS! This time without SMS fallback!",
+									"description": "Sample body to text",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"twilio",
+								"com"
+							],
+							"path": [
+								"2010-04-01",
+								"Accounts",
+								"{{ACCOUNT_SID}}",
+								"Messages.json"
+							]
+						},
+						"description": "Send an RCS message with a message string in the `Body`, with Messaging Service without triggering fallback.\n\nEven while using a Messaging Service with a SMS fallback configured, you can explicitly disable SMS fallback by prefixing the phone number in `To` field with `rcs:`"
+					},
+					"response": []
+				}
+			],
+			"description": "The first step to trigger after setting up a RCS Sender, adding the RCS Sender to a Messaging Service, and adding a SMS fallback for the Messaging Service."
+		},
+		{
+			"name": "Scene 1",
+			"item": [
+				{
+					"name": "Scene 1 Content Templates",
+					"item": [
+						{
+							"name": "Create Content Template - Initial Greeting",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successful\", function () {",
+											"    pm.response.to.be.success;",
+											"});",
+											"",
+											"pm.test(\"Response has valid JSON with sid\", function () {",
+											"    pm.response.to.be.json;",
+											"    const responseJson = pm.response.json();",
+											"    pm.expect(responseJson).to.have.property('sid');",
+											"    ",
+											"    // Store the sid in environment variable",
+											"    pm.environment.set(\"CONTENT_SID_SCENE_1_1\", responseJson.sid);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"friendly_name\": \"twilitransit_scene_1_1_initial_greeting\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Alex\",\n        \"dest\": \"Signal City Market\"\n    },\n    \"types\": {\n        \"twilio/text\": {\n            \"body\": \"Hi {{name}}! Welcome to TwiliTransit! 🚎\\n\\nLet's get you to {{dest}}.\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://content.twilio.com/v1/Content",
+									"protocol": "https",
+									"host": [
+										"content",
+										"twilio",
+										"com"
+									],
+									"path": [
+										"v1",
+										"Content"
+									]
+								},
+								"description": "The Carousel Content Type in RCS does not support the `Body` field. So, we can add another message that we can trigger without fallback. We can trigger an RCS message with this content template in our application before the carousel message."
+							},
+							"response": []
+						},
+						{
+							"name": "Create Content Template - Trip plan",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successful\", function () {",
+											"    pm.response.to.be.success;",
+											"});",
+											"",
+											"pm.test(\"Response has valid JSON with sid\", function () {",
+											"    pm.response.to.be.json;",
+											"    const responseJson = pm.response.json();",
+											"    pm.expect(responseJson).to.have.property('sid');",
+											"    ",
+											"    // Store the sid in environment variable",
+											"    pm.environment.set(\"CONTENT_SID_SCENE_1_2\", responseJson.sid);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"friendly_name\": \"twilitransit_scene_1_2_trip_plan\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Alex\",\n        \"dest\": \"Signal City Market\",\n        \"start_loc\": \"TwiliTown Main St. Bus Stop\",\n        \"start_image\": \"loc-twilitown-bus-stop.jpg\",\n        \"end_loc\": \"Signal City Market\",\n        \"end_image\": \"loc-signal-city-market.jpg\"\n    },\n    \"types\": {\n        \"twilio/carousel\": {\n            \"body\": \"Hi {{name}}! Welcome to TwiliTransit! 🚎\\n\\nLet's get you to {{dest}}.\",\n            \"cards\": [\n                {\n                    \"title\": \"Board a bus\",\n                    \"body\": \"Your trip starts from {{start_loc}}.\",\n                    \"media\": \"https://forge-assets-5378.twil.io/twilitransit/{{start_image}}\",\n                    \"actions\": [\n                        {\n                            \"type\": \"QUICK_REPLY\",\n                            \"id\": \"btn_1_2_reminder_bus\",\n                            \"title\": \"Remind me\"\n                        }\n                    ]\n                },\n                {\n                    \"title\": \"Trip end\",\n                    \"body\": \"Your trip ends at {{end_loc}}.\",\n                    \"media\": \"https://forge-assets-5378.twil.io/twilitransit/{{end_image}}\",\n                    \"actions\": [\n                        {\n                            \"id\": \"btn_1_2_email_journey\",\n                            \"title\": \"Email journey plan\",\n                            \"type\": \"QUICK_REPLY\"\n                        }\n                    ]\n                }\n            ]\n        },\n        \"twilio/text\": {\n            \"body\": \"Hi {{name}}! Welcome to TwiliTransit! 🚎\\n\\nLet's get you to {{dest}}.\\n\\nYour trip starts from {{start_loc} and ends at {{end_loc}}.\\n\\nReply with REMIND to get a reminder 5 mins before your bus arrives.\\n\\nReply with EMAIL to get the journey plan emailed to you instead.\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://content.twilio.com/v1/Content",
+									"protocol": "https",
+									"host": [
+										"content",
+										"twilio",
+										"com"
+									],
+									"path": [
+										"v1",
+										"Content"
+									]
+								},
+								"description": "The Carousel Content Type in RCS does not support the `Body` field. So, we can add another message that we can trigger without fallback. We can trigger an RCS message with this content template in our application before the carousel message."
+							},
+							"response": []
+						},
+						{
+							"name": "Review trip plan content template",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://content.twilio.com/v1/Content/{{CONTENT_SID_SCENE_1_2}}",
+									"protocol": "https",
+									"host": [
+										"content",
+										"twilio",
+										"com"
+									],
+									"path": [
+										"v1",
+										"Content",
+										"{{CONTENT_SID_SCENE_1_2}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Scene 1 - Send initial message",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
+									"    name: \"Alex\",",
+									"    dest: \"Signal City Market\"",
+									"}))"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "From",
+									"value": "{{MESSAGING_SERVICE_SID}}",
+									"type": "text"
+								},
+								{
+									"key": "To",
+									"value": "rcs:{{TO}}",
+									"description": "Send for RCS only",
+									"type": "text"
+								},
+								{
+									"key": "ContentSid",
+									"value": "{{CONTENT_SID_SCENE_1_1}}",
+									"type": "text"
+								},
+								{
+									"key": "ContentVariables",
+									"value": "{{CONTENT_VARIABLES}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"twilio",
+								"com"
+							],
+							"path": [
+								"2010-04-01",
+								"Accounts",
+								"{{ACCOUNT_SID}}",
+								"Messages.json"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Scene 1 - Send trip plan reply",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
+									"    \"name\": \"\",",
+									"    \"dest\": \"\",",
+									"    \"start_loc\": \"\",",
+									"    \"start_image\": \"\",",
+									"    \"end_loc\": \"\",",
+									"    \"end_image\": \"\"",
+									"}))"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "From",
+									"value": "{{MESSAGING_SERVICE_SID}}",
+									"type": "text"
+								},
+								{
+									"key": "To",
+									"value": "{{TO}}",
+									"type": "text"
+								},
+								{
+									"key": "ContentSid",
+									"value": "{{CONTENT_SID_SCENE_1_2}}",
+									"type": "text"
+								},
+								{
+									"key": "ContentVariables",
+									"value": "{{CONTENT_VARIABLES}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"twilio",
+								"com"
+							],
+							"path": [
+								"2010-04-01",
+								"Accounts",
+								"{{ACCOUNT_SID}}",
+								"Messages.json"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Alex has begun their journey, and receives a journey plan over RCS. The journey begins with a walk to the TwiliTown Main St. Bus stop to board a bus to the Ferry. Alex also receives with an option for a reminder before the bus arrives."
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "username",
+				"value": "{{TWILIO_API_KEY_SID}}",
+				"type": "string"
+			},
+			{
+				"key": "password",
+				"value": "{{TWILIO_API_KEY_SECRET}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
