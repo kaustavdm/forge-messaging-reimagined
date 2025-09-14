@@ -291,7 +291,11 @@ Reply with EMAIL to get the journey plan emailed to you instead.
 
 #### 2.3. Send Scene 1 messages using Twilio Messaging API
 
-**In Postman:**
+
+<details>
+<summary>View detailed steps</summary>
+
+In Postman:
 
 - Switch environment to: [`Forge: Messaging Reimagined`](./Forge-%20Messaging%20Reimagined.postman_environment.json)
 - Update the "current value" of the following keys based on the content template SIDs
@@ -300,6 +304,8 @@ Reply with EMAIL to get the journey plan emailed to you instead.
 - Send the following requests from the collection:
     - "Scene 1" -> "Scene 1 - Send initial message"
     - "Scene 1" -> "Scene 1 - Send trip plan reply"
+
+</details>
 
 > [!TIP]
 > Explore the requests in Postman. Notice the request Content-Type and Pre-request Scripts.  
@@ -337,12 +343,17 @@ Let's create one more template, this time using the Twilio Content API. This wil
 
 #### 3.1. Create a Card template using Twilio Content API
 
+<details>
+<summary>View detailed steps</summary>
+
 In the Postman collection:
 
 - Open "Scene 2" -> "Scene 2 Content Templates" -> "Create Content Template - Reminder"
 - Look at the JSON payload, and see how the `types` object is described.
 - Send request.
 - If request is successful, the value of the environment variable `CONTENT_SID_SCENE_2_1` will be updated with the new content template's SID.
+
+</details>
 
 > [!TIP]
 > Go to the Content Template Builder and observe the new template.
@@ -351,11 +362,16 @@ In the Postman collection:
 
 Now, with the content template created, send the message.
 
+<details>
+<summary>View detailed steps</summary>
+
 In the Postman collection:
 
 - Open "Scene 2" -> "Scene 2 - Send Reminder"
 - Update the variables in the request's Pre-request Script as needed
 - Send request.
+
+</details>
 
 > [!TIP]
 > Bonus: Try creating the template again without adding `subtitle`, and send another message. Notice how the action buttons change to chips.
