@@ -399,7 +399,7 @@ As Alex's bus journey is about to end, and Alex nears the Ferry terminal, Alex r
 
 Let's create one more template using the Twilio Content API. This will be a Card with a media and a URL action button.
 
-#### 3.1. Create a Card template with media using Twilio Content API
+#### 4.1. Create a Card template with media using Twilio Content API
 
 <details>
 <summary>View detailed steps</summary>
@@ -413,7 +413,7 @@ In the Postman collection:
 
 </details>
 
-#### 3.2. Send Scene 3 message using Twilio Messaging API
+#### 4.2. Send Scene 3 message using Twilio Messaging API
 
 Now, with the content template created, send the message.
 
@@ -435,7 +435,7 @@ In the Postman collection:
 > **DEMO:** Show the messages sent in this scene.  
 > **DEMO:** Select "Directions to Ferry" button
 
-#### 3.3. Review
+#### 4.3. Review
 
 > [!TIP]
 > Let's review what we have built in this section.
