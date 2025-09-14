@@ -37,7 +37,7 @@ In this approx. 60-minute hands-on lab, you'll build TwiliTransit - a fictional 
 <summary><strong>Scene details</strong></summary>
 
 1. **Trip planning:** Alex texts "Plan my trip to Signal City Market" to the TwiliTransit number, and receives a journey plan. The journey begins with a walk to the TwiliTown Main St. Bus stop to board a bus to the Ferry. Alex also receives with an option for a reminder before the bus arrives.
-2. **Bus journey:** Alex's bus boarding reminder time arrives. Alex receives a reminder text asking to confirm if Alex has reached the bus stop. Then, Alex receives the details of the bay where the bus will arrive.
+2. **Bus boarding:** Alex's bus boarding reminder time arrives. Alex receives a reminder text asking to confirm if Alex has reached the bus stop. Then, Alex receives the details of the bay where the bus will arrive.
 3. **Ferry transfer:** As Alex's bus journey is about to end, and Alex nears the Ferry terminal, Alex receives a boarding pass QR code for the Ferry, and directions from the bus to the Ferry docks.
 4. **Metro transfer** - As the Ferry journey is about to end, Alex receives a message with Metro arrival/depature timing, platform and route map, along with an option to book rideshare once the metro ride ends.
 5. **Journey completion:** As the Metro ride ends, Alex receives a trip summary with receipts.
@@ -335,7 +335,7 @@ What we have so far:
 
 ---
 
-### 3. Scene 2: Bus journey
+### 3. Scene 2: Bus boarding
 
 Alex is already on their way to the Bus Stop. Alex's reminder time arrives.
 
@@ -390,5 +390,59 @@ What we have so far:
 - [ ] Created a Card content template without media using the Twilio Content API
     - [ ] Add quick_reply action buttons
     - [ ] Added Text fallback to the content template
+
+---
+
+### 4. Scene 3: Ferry transfer
+
+As Alex's bus journey is about to end, and Alex nears the Ferry terminal, Alex receives a boarding pass QR code for the Ferry, and directions from the bus to the Ferry docks.
+
+Let's create one more template using the Twilio Content API. This will be a Card with a media and a URL action button.
+
+#### 3.1. Create a Card template with media using Twilio Content API
+
+<details>
+<summary>View detailed steps</summary>
+
+In the Postman collection:
+
+- Open "Scene 3" -> "Scene 3 Content Templates" -> "Create Content Template - Ferry transfer"
+- Look at the JSON payload, and see how the `types` object is described.
+- Send request.
+- If request is successful, the value of the environment variable `CONTENT_SID_SCENE_3_1` will be updated with the new content template's SID.
+
+</details>
+
+#### 3.2. Send Scene 3 message using Twilio Messaging API
+
+Now, with the content template created, send the message.
+
+<details>
+<summary>View detailed steps</summary>
+
+In the Postman collection:
+
+- Open "Scene 3" -> "Scene 3 - Send Ferry instructions"
+- Update the variables in the request's Pre-request Script as needed
+- Send request.
+
+</details>
+
+> [!TIP]
+> Bonus: Try creating the template again multiple `media` urls and send another message.
+
+> [!IMPORTANT]
+> **DEMO:** Show the messages sent in this scene.  
+> **DEMO:** Select "Directions to Ferry" button
+
+#### 3.3. Review
+
+> [!TIP]
+> Let's review what we have built in this section.
+
+What we have so far:
+
+- [ ] Created a Card content template with media using the Twilio Content API
+- [ ] Add `URL` action button
 
 ---
