@@ -446,3 +446,57 @@ What we have so far:
 - [ ] Add `URL` action button
 
 ---
+
+### 5. Scene 4: Metro transfer
+
+As Alex's ferry is about to dock at Riverside Station, Alex receives directions to the Metro train that will take them to Signal City Market, along with option to book a bikeshare.
+
+Let's create one more template using the Twilio Content API. This will be another carousel with cards containing media with URL action buttons.
+
+#### 5.1. Create a Card template with media using Twilio Content API
+
+<details>
+<summary>View detailed steps</summary>
+
+In the Postman collection:
+
+- Open "Scene 4" -> "Scene 4 Content Templates" -> "Create Content Template - Metro transfer"
+- Look at the JSON payload, and see how the `types` object is described.
+- Send request.
+- If request is successful, the value of the environment variable `CONTENT_SID_SCENE_4_1` will be updated with the new content template's SID.
+
+</details>
+
+#### 5.2. Send Scene 4 message using Twilio Messaging API
+
+Now, with the content template created, send the message.
+
+<details>
+<summary>View detailed steps</summary>
+
+In the Postman collection:
+
+- Open "Scene 4" -> "Scene 4 - Send Metro instructions"
+- Update the variables in the request's Pre-request Script as needed
+- Send request.
+
+</details>
+
+> [!TIP]
+> Bonus: Try adding the route URL as a card instead.
+
+> [!IMPORTANT]
+> **DEMO:** Show the messages sent in this scene.
+
+#### 5.3. Review
+
+> [!TIP]
+> Let's review what we have built in this section.
+
+What we have so far:
+
+- [ ] Created a Carousel content template with media using the Twilio Content API
+- [ ] Showcased using Carousel to prompte additional / related services
+- [ ] Add `URL` action button
+
+---

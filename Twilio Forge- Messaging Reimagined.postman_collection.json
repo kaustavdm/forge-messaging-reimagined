@@ -216,8 +216,7 @@
 										"v1",
 										"Content"
 									]
-								},
-								"description": "The Carousel Content Type in RCS does not support the `Body` field. So, we can add another message that we can trigger without fallback. We can trigger an RCS message with this content template in our application before the carousel message."
+								}
 							},
 							"response": []
 						},
@@ -317,12 +316,12 @@
 							"script": {
 								"exec": [
 									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
-									"    \"name\": \"\",",
-									"    \"dest\": \"\",",
-									"    \"start_loc\": \"\",",
-									"    \"start_image\": \"\",",
-									"    \"end_loc\": \"\",",
-									"    \"end_image\": \"\"",
+									"    // \"name\": \"\",",
+									"    // \"dest\": \"\",",
+									"    // \"start_loc\": \"\",",
+									"    // \"start_image\": \"\",",
+									"    // \"end_loc\": \"\",",
+									"    // \"end_image\": \"\"",
 									"}))"
 								],
 								"type": "text/javascript",
@@ -434,8 +433,7 @@
 										"v1",
 										"Content"
 									]
-								},
-								"description": "The Carousel Content Type in RCS does not support the `Body` field. So, we can add another message that we can trigger without fallback. We can trigger an RCS message with this content template in our application before the carousel message."
+								}
 							},
 							"response": []
 						}
@@ -564,8 +562,7 @@
 										"v1",
 										"Content"
 									]
-								},
-								"description": "The Carousel Content Type in RCS does not support the `Body` field. So, we can add another message that we can trigger without fallback. We can trigger an RCS message with this content template in our application before the carousel message."
+								}
 							},
 							"response": []
 						}
@@ -638,6 +635,140 @@
 				}
 			],
 			"description": "**Ferry transfer:**\n\nAs Alex's bus journey is about to end, and Alex nears the Ferry terminal, Alex receives a boarding pass QR code for the Ferry, and directions from the bus to the Ferry docks."
+		},
+		{
+			"name": "Scene 4",
+			"item": [
+				{
+					"name": "Scene 4 Content Templates",
+					"item": [
+						{
+							"name": "Create Content Template - Metro transfer",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successful\", function () {",
+											"    pm.response.to.be.success;",
+											"});",
+											"",
+											"pm.test(\"Response has valid JSON with sid\", function () {",
+											"    pm.response.to.be.json;",
+											"    const responseJson = pm.response.json();",
+											"    pm.expect(responseJson).to.have.property('sid');",
+											"    ",
+											"    // Store the sid in environment variable",
+											"    pm.environment.set(\"CONTENT_SID_SCENE_4_1\", responseJson.sid);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"friendly_name\": \"twilitransit_scene_4_1_metro_transfer\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Alex\",\n        \"dest\": \"Signal City Market\",\n        \"dest_image\": \"loc-signal-city-market.jpg\",\n        \"platform\": \"2\",\n        \"transfer_window_min\": \"6\",\n        \"loc_name\": \"Riverside Station\",\n        \"loc_image\": \"loc-riverside-station.jpg\",\n        \"route_map_url\": \"https://forge-assets-5378.twil.io/twilitransit/routemap.jpg\",\n        \"bikeshare_url\": \"https://en.wikipedia.org/wiki/Bicycle-sharing_system\"\n    },\n    \"types\": {\n        \"twilio/carousel\": {\n            \"body\": \"Your train will be arrive on Platform #{{platform}}\",\n            \"cards\": [\n                {\n                    \"title\": \"🚇 Metro transfer towards {{dest}}\",\n                    \"body\": \"You're arriving at {{loc_name}}. The connecting train will leave from Platform #{{platform}} in {{transfer_window_min}} minutes.\",\n                    \"media\": \"https://forge-assets-5378.twil.io/twilitransit/{{loc_image}}\",\n                    \"actions\": [\n                        {\n                            \"type\": \"URL\",\n                            \"id\": \"btn_4_1_route_map\",\n                            \"title\": \"View route map\",\n                            \"url\": \"{{route_map_url}}\"\n                        }\n                    ]\n                },\n                {\n                    \"title\": \"🚴🏽 Rent a bike at {{dest}}\",\n                    \"body\": \"Explore {{dest}} on two wheels using TwiliTransit Bikeshare.\",\n                    \"media\": \"https://forge-assets-5378.twil.io/twilitransit/{{dest_image}}\",\n                    \"actions\": [\n                        {\n                            \"type\": \"URL\",\n                            \"id\": \"btn_4_1_rent_bike\",\n                            \"title\": \"Book your bike\",\n                            \"url\": \"{{bikeshare_url}}\"\n                        }\n                    ]\n                }\n            ]\n        },\n        \"twilio/text\": {\n            \"body\": \"You're arriving at {{loc_name}}. The connecting train to {{dest}} will leave from Platform #{{platform}} in {{transfer_window_min}} minutes.\\n\\nRoute map: {{route_map_url}}\\n\\nBook bikeshare at destination: {{bikeshare_url}}\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://content.twilio.com/v1/Content",
+									"protocol": "https",
+									"host": [
+										"content",
+										"twilio",
+										"com"
+									],
+									"path": [
+										"v1",
+										"Content"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Scene 4 - Send Metro instructions",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
+									"    \"name\": \"Alex\",",
+									"    \"dest\": \"Signal City Market\",",
+									"    \"dest_image\": \"loc-signal-city-market.jpg\",",
+									"    \"platform\": \"2\",",
+									"    \"transfer_window_min\": \"6\",",
+									"    \"loc_name\": \"Riverside Station\",",
+									"    \"loc_image\": \"loc-riverside-station.jpg\",",
+									"    \"route_map_url\": \"https://forge-assets-5378.twil.io/twilitransit/routemap.jpg\",",
+									"    \"bikeshare_url\": \"https://en.wikipedia.org/wiki/Bicycle-sharing_system\"",
+									"}));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "From",
+									"value": "{{MESSAGING_SERVICE_SID}}",
+									"type": "text"
+								},
+								{
+									"key": "To",
+									"value": "{{TO}}",
+									"type": "text"
+								},
+								{
+									"key": "ContentSid",
+									"value": "{{CONTENT_SID_SCENE_4_1}}",
+									"type": "text"
+								},
+								{
+									"key": "ContentVariables",
+									"value": "{{CONTENT_VARIABLES}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"twilio",
+								"com"
+							],
+							"path": [
+								"2010-04-01",
+								"Accounts",
+								"{{ACCOUNT_SID}}",
+								"Messages.json"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "**Metro transfer:**\n\nAs Alex's ferry is about to dock at Riverside Station, Alex receives directions to the Metro train that will take them to Signal City Market, along with option to book rideshare."
 		}
 	],
 	"auth": {
