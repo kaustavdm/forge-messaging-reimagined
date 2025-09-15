@@ -23,8 +23,8 @@ In this approx. 60-minute hands-on lab, you'll build the RCS messages for TwiliT
 - Set up and configure RCS messaging with Twilio
 - Create rich content templates using the Content Template Builder and the Content API
 - Send RCS messages using the Twilio REST API
-- Send RCS message from an Express.js backend
 - Dynamic fallback for RCS
+- Watch for incoming message from an Express.js backend
 
 ### The journey we'll build
 
@@ -313,7 +313,7 @@ In Postman:
 
 > [!IMPORTANT]
 > **DEMO:** Show the messages sent in this scene.  
-> **DEMO:** Select "Remind me"
+> **DEMO:** Select "Remind me"  
 > **DEMO:** Optional, highlight how the fallback works.
 
 #### 2.4. Review
@@ -549,3 +549,19 @@ What we have so far:
 - [ ] Wrapping up a user journey with feedback options
 
 ---
+
+## Summing up
+
+✅ That's it, folks!
+
+Thanks for following along. Congratulations on making it this far! 👏🏽 🎉
+
+By now, you should have a good idea of how to send RCS messages with Twilio, create different kinds of content templates, and engage audiences with a new interaction model.
+
+We hope this workshop helps you build better omnichannel experiences for your customers by adding RCS to the mix. By reaching people where they already are – whether that's RCS, WhatsApp, SMS, or email – you not only boost open rates, but also build trust with well-timed, relevant messages. Give your customers a single journey, regardless of channel.
+
+This is just the beginning. How do you plan to adapt RCS in your users' messaging journeys?
+
+We can't wait to see what you build.
+
+`<3`

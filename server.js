@@ -14,12 +14,27 @@ const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TO
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Routes will be added here
-app.post('/sender/rcs/webhook', (req, res) => {})
+// --------------------------
+// Add routes here
+// --------------------------
 
-app.post('/sender/sms/webhook', (req, res) => {})
+// Incoming webhook for messages sent to Twilio phone number
+// Respond with a valid TwiML
+// (we use an empty TwiML here to show the payload sent by Twilio)
+app.post('/webhook/incoming', (req, res) => {
+  const emptytwiml = '<?xml version="1.0" encoding="UTF-8"?><Response></Response>'
 
-// Health check
+  const { From, Body} = req.body
+  console.log(From, Body)
+  console.log(JSON.stringify(req.body, null, 2))
+
+  // respond with empty response on the webhook
+  res.type("text/xml").send(emptytwiml.toString())
+})
+
+// --------------------------
+// Health check and server start
+// --------------------------
 app.get('/', (req, res) => {
   res.json({ 
     status: 'TwiliTransit API is running',
