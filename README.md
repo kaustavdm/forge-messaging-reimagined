@@ -31,6 +31,10 @@ Import these files into Postman to easily follow and test the API requests descr
 
 [`server.js`](./server.js) contains simple Express JS webserver that you can use to capture incoming message webhooks.
 
+### Workshop assets
+
+The [`./assets/`](./assets/) directory contains assets that you may use for the workshop. These include images for the RCS sender, TOS, and some generated images of fictional locations.
+
 ---
 
 ☮️
