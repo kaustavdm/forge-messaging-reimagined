@@ -15,6 +15,9 @@ The [RUNBOOK.md](./RUNBOOK.md) is the main component of this repository. It prov
 
 **Read the [Runbook](./RUNBOOK.md) for detailed instructions and workshop steps.**
 
+> [!TIP]
+> Want a more interactive version of the Runbook? Check out the [Twilio Forge: Messaging Reimagined – Interactive Lab](https://twilio-forge-blueprint.vercel.app/).
+
 ## 🚀 Quick Links
 
 ### Postman resources

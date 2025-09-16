@@ -50,6 +50,7 @@ In this approx. 60-minute hands-on lab, you'll build the RCS messages for TwiliT
 * [Twilio API Message Resource](https://www.twilio.com/docs/messaging/api/message-resource)
 * [Postman Collection for this workshop](./Twilio%20Forge-%20Messaging%20Reimagined.postman_collection.json)
 * [Assets to use (for demo purposes only)](https://forge-assets-5378.twil.io/index.html)
+* [Interactive Lab (alternative follow-along to this Runbook)](https://twilio-forge-blueprint.vercel.app/)
 
 ---
 
