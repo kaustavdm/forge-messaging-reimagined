@@ -242,9 +242,9 @@ Next, create another Content Template that contains the Carousel. We will keep i
 **Body:**
 
 ```text
-Hi {{1}}! Welcome to TwiliTransit! 🚎
+Hi {{name}}! Welcome to TwiliTransit! 🚎
 
-Let's get you to {{2}}.
+Let's get you to {{dest}}.
 ```
 
 **Card 1:**
@@ -261,7 +261,7 @@ Let's get you to {{2}}.
 
 - Media URL: `https://forge-assets-5378.twil.io/twilitransit/{{end_image}}`
 - Card Title: `Trip end`
-- Card Body: `Your trip ends at {{6}}.`
+- Card Body: `Your trip ends at {{end_loc}}.`
 - Button:
     - Type of Action: `Quick Reply`
     - Button text: `Email journey plan`
@@ -274,11 +274,11 @@ Let's get you to {{2}}.
 Body:
 
 ```text
-Hi {{1}}! Welcome to TwiliTransit! 🚎
+Hi {{name}}! Welcome to TwiliTransit! 🚎
 
-Let's get you to {{2}}.
+Let's get you to {{dest}}.
 
-Your trip starts from {{4}} and ends at {{6}}.
+Your trip starts from {{start_loc}} and ends at {{end_loc}}.
 
 Reply with REMIND to get a reminder 5 mins before your bus arrives.
 
