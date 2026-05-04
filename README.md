@@ -22,8 +22,8 @@ The [RUNBOOK.md](./RUNBOOK.md) is the main component of this repository. It prov
 
 ### Postman resources
 
-- [Postman Collection](./Twilio%20Forge-%20Messaging%20Reimagined.postman_collection.json)
-- [Postman Environment](./Forge-%20Messaging%20Reimagined.postman_environment.json)
+- [Postman Collection](./postman/Twilio%20Forge-%20Messaging%20Reimagined.postman_collection.json)
+- [Postman Environment](./postman/Forge-%20Messaging%20Reimagined.postman_environment.json)
 
 Import these files into Postman to easily follow and test the API requests described in the Runbook.
 

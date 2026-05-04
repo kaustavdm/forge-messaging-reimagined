@@ -59,7 +59,7 @@ Our biggest sale of the year just launched — {{discount}}% off your curated pi
 
 In Postman:
 
-- Switch environment to: [`Forge: Messaging Reimagined`](./Forge-%20Messaging%20Reimagined.postman_environment.json)
+- Switch environment to: [`Forge: Messaging Reimagined`](./postman/Forge-%20Messaging%20Reimagined.postman_environment.json)
 - Update the **"current value"** of `CONTENT_SID_SCENE_1_1` with the SID of the template created in [2.1](#21-create-a-text-template-using-content-template-builder)
   - The SID is visible in the Content Template Builder after the template is created
 - Send **"Scene 1" → "Scene 1 Content Templates" → "Review VIP alert content template"** to confirm the SID is correct

@@ -96,6 +96,51 @@
 					"name": "Scene 1 Content Templates",
 					"item": [
 						{
+							"name": "Create Content Template - VIP alert (backup)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successful\", function () {",
+											"    pm.response.to.be.success;",
+											"});",
+											"",
+											"pm.test(\"Response has valid JSON with sid\", function () {",
+											"    pm.response.to.be.json;",
+											"    const responseJson = pm.response.json();",
+											"    pm.expect(responseJson).to.have.property('sid');",
+											"    pm.environment.set(\"CONTENT_SID_SCENE_1_1\", responseJson.sid);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"friendly_name\": \"owl_store_scene_1_1_vip_alert\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Twill\",\n        \"discount\": \"30\"\n    },\n    \"types\": {\n        \"twilio/text\": {\n            \"body\": \"Hey {{name}}! 🦉 You're a VIP at Owl Store.\\n\\nOur biggest sale of the year just launched — {{discount}}% off your curated picks. For today only.\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://content.twilio.com/v1/Content",
+									"protocol": "https",
+									"host": ["content", "twilio", "com"],
+									"path": ["v1", "Content"]
+								},
+								"description": "Backup request to create the Scene 1 VIP alert Text template via the Content API. Use this if you were unable to create the template in the Console. On success, the test script automatically stores the SID in CONTENT_SID_SCENE_1_1."
+							},
+							"response": []
+						},
+						{
 							"name": "Review VIP alert content template",
 							"request": {
 								"method": "GET",

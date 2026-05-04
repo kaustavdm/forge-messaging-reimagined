@@ -18,7 +18,7 @@
 - A smartphone with RCS capabilities for testing
 - Basic understanding of Twilio Messaging APIs and Messaging Services
 - The REST API client of your choice — this workshop uses Postman
-  - Download the [Postman collection](./Twilio%20Forge-%20Messaging%20Reimagined.postman_collection.json) and [Postman environment](./Forge-%20Messaging%20Reimagined.postman_environment.json) and import them into Postman
+  - Download the [Postman collection](./postman/Twilio%20Forge-%20Messaging%20Reimagined.postman_collection.json) and [Postman environment](./postman/Forge-%20Messaging%20Reimagined.postman_environment.json) and import them into Postman
 
 ---
 
@@ -52,7 +52,7 @@
 - [Messaging Services Documentation](https://www.twilio.com/docs/messaging/services)
 - [Content Types Overview](https://www.twilio.com/docs/content/content-types-overview)
 - [Twilio API Message Resource](https://www.twilio.com/docs/messaging/api/message-resource)
-- [Postman Collection for this workshop](./Twilio%20Forge-%20Messaging%20Reimagined.postman_collection.json)
+- [Postman Collection for this workshop](./postman/Twilio%20Forge-%20Messaging%20Reimagined.postman_collection.json)
 - [Assets for this workshop (demo purposes only)](https://forge-assets-5378.twil.io/index.html)
 - [Interactive Lab (alternative follow-along)](https://twilio-forge-blueprint.vercel.app/)
 

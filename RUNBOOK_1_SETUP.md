@@ -70,7 +70,7 @@ You now have a Messaging Service with an RCS sender and SMS fallback.
 RCS Messages are sent using the [`Messages` resource](https://www.twilio.com/docs/messaging/api/message-resource) — the same resource used for SMS.
 
 > [!NOTE]
-> Use the requests in the **"Prequel"** folder of the [Postman collection](./Twilio%20Forge-%20Messaging%20Reimagined.postman_collection.json).
+> Use the requests in the **"Prequel"** folder of the [Postman collection](./postman/Twilio%20Forge-%20Messaging%20Reimagined.postman_collection.json).
 > Make sure to update the Postman environment's current value fields.
 > Use your test device phone number as the `To` field value.
 
