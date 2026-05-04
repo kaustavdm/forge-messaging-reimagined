@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "55972bd7-8d2d-4c54-b864-a9a58d4c8362",
 		"name": "Twilio Forge: Messaging Reimagined",
-		"description": "Follow-along Postman Collection for the requests sent as part of the Twilio Forge: Messaging Reimagined webinar.\n\n## Setup\n\n- You will need an activated Twilio account.\n    \n- Create an [API Key from the Twilio Console](https://www.twilio.com/docs/iam/api-keys/keys-in-console). Consider creating a Restricted key with only the service you need. You can alternately create an [API key using the REST API](https://www.twilio.com/docs/iam/api-keys/key-resource-v1).\n    \n- Add the API Key and Secret to the environment.\n    \n- Get the Account SID from the Twilio Console homepage and add it to the environment.\n    \n- Follow the [Runbook's setup instructions](https://github.com/kaustavdm/forge-messaging-reimagined/blob/dev/RUNBOOK.md#build) and create additional resources.\n    \n\n### Story\n\nIn the fictional city of Owl Harbour, Alex decides to visit Signal City Market from TwiliTown. The city's integrated multi-modal mass transit system, TwiliTransit, plans and guides Alex through the journey as Alex goes from a Bus to a Ferry to a Metro, with rich, contextual messaging at each step.",
+		"description": "Follow-along Postman Collection for the requests sent as part of the Twilio Forge: Messaging Reimagined workshop at SIGNAL San Francisco 2026.\n\n## Setup\n\n- You will need an activated Twilio account.\n    \n- Create an [API Key from the Twilio Console](https://www.twilio.com/docs/iam/api-keys/keys-in-console). Consider creating a Restricted key with only the service you need. You can alternately create an [API key using the REST API](https://www.twilio.com/docs/iam/api-keys/key-resource-v1).\n    \n- Add the API Key and Secret to the environment.\n    \n- Get the Account SID from the Twilio Console homepage and add it to the environment.\n    \n- Follow the [Runbook's setup instructions](https://github.com/kaustavdm/forge-messaging-reimagined/blob/main/RUNBOOK.md) and create additional resources.\n    \n\n### Story\n\nOwl Store detects that Twill is a VIP customer. An automated flow sends Twill a personalised sale alert, curated product recommendations, and directions to the nearest store — all via RCS.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "43445318"
 	},
@@ -33,7 +33,7 @@
 								{
 									"key": "Body",
 									"value": "Hi from the Twilio Forge session on RCS!",
-									"description": "Sample body to text",
+									"description": "Sample body text",
 									"type": "text"
 								}
 							]
@@ -41,19 +41,10 @@
 						"url": {
 							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
 							"protocol": "https",
-							"host": [
-								"api",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"2010-04-01",
-								"Accounts",
-								"{{ACCOUNT_SID}}",
-								"Messages.json"
-							]
+							"host": ["api", "twilio", "com"],
+							"path": ["2010-04-01", "Accounts", "{{ACCOUNT_SID}}", "Messages.json"]
 						},
-						"description": "Send an RCS message with a message string in the `Body`.\n\nUsing a Messaging Service with an RCS Sender attached, and SMS fallback configured, this request will send the simple text as RCS if the receiving phone supports RCS, else it will be delivered as a SMS."
+						"description": "Send an RCS message with a message string in the `Body`.\n\nUsing a Messaging Service with an RCS Sender attached and SMS fallback configured, this request will send the simple text as RCS if the receiving phone supports RCS, otherwise it will be delivered as SMS."
 					},
 					"response": []
 				},
@@ -74,13 +65,13 @@
 								{
 									"key": "To",
 									"value": "rcs:{{TO}}",
-									"description": "Phone number to send message to, prefixed with `rcs:`",
+									"description": "Phone number prefixed with `rcs:` to disable SMS fallback",
 									"type": "text"
 								},
 								{
 									"key": "Body",
-									"value": "Hi from the Twilio Forge session on RCS! This time without SMS fallback!",
-									"description": "Sample body to text",
+									"value": "Hi from the Twilio Forge session on RCS! This time without SMS fallback.",
+									"description": "Sample body text",
 									"type": "text"
 								}
 							]
@@ -88,24 +79,15 @@
 						"url": {
 							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
 							"protocol": "https",
-							"host": [
-								"api",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"2010-04-01",
-								"Accounts",
-								"{{ACCOUNT_SID}}",
-								"Messages.json"
-							]
+							"host": ["api", "twilio", "com"],
+							"path": ["2010-04-01", "Accounts", "{{ACCOUNT_SID}}", "Messages.json"]
 						},
-						"description": "Send an RCS message with a message string in the `Body`, with Messaging Service without triggering fallback.\n\nEven while using a Messaging Service with a SMS fallback configured, you can explicitly disable SMS fallback by prefixing the phone number in `To` field with `rcs:`"
+						"description": "Even while using a Messaging Service with SMS fallback configured, you can explicitly disable fallback by prefixing the phone number in the `To` field with `rcs:`."
 					},
 					"response": []
 				}
 			],
-			"description": "The first step to trigger after setting up a RCS Sender, adding the RCS Sender to a Messaging Service, and adding a SMS fallback for the Messaging Service."
+			"description": "The first step to trigger after setting up an RCS Sender, adding it to a Messaging Service, and adding an SMS fallback."
 		},
 		{
 			"name": "Scene 1",
@@ -114,147 +96,33 @@
 					"name": "Scene 1 Content Templates",
 					"item": [
 						{
-							"name": "Create Content Template - Initial Greeting",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successful\", function () {",
-											"    pm.response.to.be.success;",
-											"});",
-											"",
-											"pm.test(\"Response has valid JSON with sid\", function () {",
-											"    pm.response.to.be.json;",
-											"    const responseJson = pm.response.json();",
-											"    pm.expect(responseJson).to.have.property('sid');",
-											"    ",
-											"    // Store the sid in environment variable",
-											"    pm.environment.set(\"CONTENT_SID_SCENE_1_1\", responseJson.sid);",
-											"});"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"friendly_name\": \"twilitransit_scene_1_1_initial_greeting\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Alex\",\n        \"dest\": \"Signal City Market\"\n    },\n    \"types\": {\n        \"twilio/text\": {\n            \"body\": \"Hi {{name}}! Welcome to TwiliTransit! 🚎\\n\\nLet's get you to {{dest}}.\"\n        }\n    }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://content.twilio.com/v1/Content",
-									"protocol": "https",
-									"host": [
-										"content",
-										"twilio",
-										"com"
-									],
-									"path": [
-										"v1",
-										"Content"
-									]
-								},
-								"description": "The Carousel Content Type in RCS does not support the `Body` field. So, we can add another message that we can trigger without fallback. We can trigger an RCS message with this content template in our application before the carousel message."
-							},
-							"response": []
-						},
-						{
-							"name": "Create Content Template - Trip plan",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successful\", function () {",
-											"    pm.response.to.be.success;",
-											"});",
-											"",
-											"pm.test(\"Response has valid JSON with sid\", function () {",
-											"    pm.response.to.be.json;",
-											"    const responseJson = pm.response.json();",
-											"    pm.expect(responseJson).to.have.property('sid');",
-											"    ",
-											"    // Store the sid in environment variable",
-											"    pm.environment.set(\"CONTENT_SID_SCENE_1_2\", responseJson.sid);",
-											"});"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"friendly_name\": \"twilitransit_scene_1_2_trip_plan\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Alex\",\n        \"dest\": \"Signal City Market\",\n        \"start_loc\": \"TwiliTown Main St. Bus Stop\",\n        \"start_image\": \"loc-twilitown-bus-stop.jpg\",\n        \"end_loc\": \"Signal City Market\",\n        \"end_image\": \"loc-signal-city-market.jpg\"\n    },\n    \"types\": {\n        \"twilio/carousel\": {\n            \"body\": \"Hi {{name}}! Welcome to TwiliTransit! 🚎\\n\\nLet's get you to {{dest}}.\",\n            \"cards\": [\n                {\n                    \"title\": \"Board a bus\",\n                    \"body\": \"Your trip starts from {{start_loc}}.\",\n                    \"media\": \"https://forge-assets-5378.twil.io/twilitransit/{{start_image}}\",\n                    \"actions\": [\n                        {\n                            \"type\": \"QUICK_REPLY\",\n                            \"id\": \"btn_1_2_reminder_bus\",\n                            \"title\": \"Remind me\"\n                        }\n                    ]\n                },\n                {\n                    \"title\": \"Trip end\",\n                    \"body\": \"Your trip ends at {{end_loc}}.\",\n                    \"media\": \"https://forge-assets-5378.twil.io/twilitransit/{{end_image}}\",\n                    \"actions\": [\n                        {\n                            \"id\": \"btn_1_2_email_journey\",\n                            \"title\": \"Email journey plan\",\n                            \"type\": \"QUICK_REPLY\"\n                        }\n                    ]\n                }\n            ]\n        },\n        \"twilio/text\": {\n            \"body\": \"Hi {{name}}! Welcome to TwiliTransit! 🚎\\n\\nLet's get you to {{dest}}.\\n\\nYour trip starts from {{start_loc} and ends at {{end_loc}}.\\n\\nReply with REMIND to get a reminder 5 mins before your bus arrives.\\n\\nReply with EMAIL to get the journey plan emailed to you instead.\"\n        }\n    }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://content.twilio.com/v1/Content",
-									"protocol": "https",
-									"host": [
-										"content",
-										"twilio",
-										"com"
-									],
-									"path": [
-										"v1",
-										"Content"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Review trip plan content template",
+							"name": "Review VIP alert content template",
 							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "https://content.twilio.com/v1/Content/{{CONTENT_SID_SCENE_1_2}}",
+									"raw": "https://content.twilio.com/v1/Content/{{CONTENT_SID_SCENE_1_1}}",
 									"protocol": "https",
-									"host": [
-										"content",
-										"twilio",
-										"com"
-									],
-									"path": [
-										"v1",
-										"Content",
-										"{{CONTENT_SID_SCENE_1_2}}"
-									]
-								}
+									"host": ["content", "twilio", "com"],
+									"path": ["v1", "Content", "{{CONTENT_SID_SCENE_1_1}}"]
+								},
+								"description": "Fetch the content template created in the Console for Scene 1 to confirm it is set up correctly. Update the environment variable CONTENT_SID_SCENE_1_1 with the SID shown in the Content Template Builder."
 							},
 							"response": []
 						}
 					]
 				},
 				{
-					"name": "Scene 1 - Send initial message",
+					"name": "Scene 1 - Send VIP sale alert",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
 								"exec": [
 									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
-									"    name: \"Alex\",",
-									"    dest: \"Signal City Market\"",
-									"}))"
+									"    name: \"Twill\",",
+									"    discount: \"30\"",
+									"}));"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -275,7 +143,7 @@
 								{
 									"key": "To",
 									"value": "rcs:{{TO}}",
-									"description": "Send for RCS only",
+									"description": "Send for RCS only — no SMS fallback",
 									"type": "text"
 								},
 								{
@@ -293,90 +161,15 @@
 						"url": {
 							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
 							"protocol": "https",
-							"host": [
-								"api",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"2010-04-01",
-								"Accounts",
-								"{{ACCOUNT_SID}}",
-								"Messages.json"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Scene 1 - Send trip plan reply",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
-									"    // \"name\": \"\",",
-									"    // \"dest\": \"\",",
-									"    // \"start_loc\": \"\",",
-									"    // \"start_image\": \"\",",
-									"    // \"end_loc\": \"\",",
-									"    // \"end_image\": \"\"",
-									"}))"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "From",
-									"value": "{{MESSAGING_SERVICE_SID}}",
-									"type": "text"
-								},
-								{
-									"key": "To",
-									"value": "{{TO}}",
-									"type": "text"
-								},
-								{
-									"key": "ContentSid",
-									"value": "{{CONTENT_SID_SCENE_1_2}}",
-									"type": "text"
-								},
-								{
-									"key": "ContentVariables",
-									"value": "{{CONTENT_VARIABLES}}",
-									"type": "text"
-								}
-							]
+							"host": ["api", "twilio", "com"],
+							"path": ["2010-04-01", "Accounts", "{{ACCOUNT_SID}}", "Messages.json"]
 						},
-						"url": {
-							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
-							"protocol": "https",
-							"host": [
-								"api",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"2010-04-01",
-								"Accounts",
-								"{{ACCOUNT_SID}}",
-								"Messages.json"
-							]
-						}
+						"description": "Send the VIP sale alert Text template. Uses `rcs:` prefix to send RCS-only, since this is a lead-in message before the Carousel and Carousel does not support a Body field in RCS."
 					},
 					"response": []
 				}
 			],
-			"description": "**Trip planning:**\n\nAlex has begun their journey, and receives a journey plan over RCS. The journey begins with a walk to the TwiliTown Main St. Bus stop to board a bus to the Ferry. Alex also receives with an option for a reminder before the bus arrives."
+			"description": "**VIP detection:**\n\nOwl Store detects that Twill is a VIP customer. Twill receives a personalised sale alert via RCS.\n\nThe Text content template is created in the Twilio Console Content Template Builder in this scene."
 		},
 		{
 			"name": "Scene 2",
@@ -385,7 +178,7 @@
 					"name": "Scene 2 Content Templates",
 					"item": [
 						{
-							"name": "Create Content Template - Reminder",
+							"name": "Create Content Template - Curated items",
 							"event": [
 								{
 									"listen": "test",
@@ -399,8 +192,6 @@
 											"    pm.response.to.be.json;",
 											"    const responseJson = pm.response.json();",
 											"    pm.expect(responseJson).to.have.property('sid');",
-											"    ",
-											"    // Store the sid in environment variable",
 											"    pm.environment.set(\"CONTENT_SID_SCENE_2_1\", responseJson.sid);",
 											"});"
 										],
@@ -414,7 +205,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"friendly_name\": \"twilitransit_scene_2_1_reminder\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Alex\",\n        \"bus_number\": \"12A\",\n        \"bus_bay\": \"2\",\n        \"start_loc\": \"Main St. Bus Stop\"\n    },\n    \"types\": {\n        \"twilio/card\": {\n            \"title\": \"🚌 Bus alert for {{name}}\",\n            \"body\": \"Your bus (#{{bus_number}}) is arriving in 5 minutes at bus bay {{bus_bay}}.\",\n            \"subtitle\": \"Let us know once you arrive.\",\n            \"actions\": [\n                {\n                    \"type\": \"QUICK_REPLY\",\n                    \"id\": \"btn_2_1_yes\",\n                    \"title\": \"Yes, I'm here\"\n                },\n                {\n                    \"type\": \"QUICK_REPLY\",\n                    \"id\": \"btn_2_1_no\",\n                    \"title\": \"No, I changed my plans\"\n                }\n            ]\n        },\n        \"twilio/text\": {\n            \"body\": \"{{name}}, your bus (#{{bus_numer}}) arrives in 5 minutes at bus bay {{bus_bay}}.\\n\\nReply 'Yes, I'm here' when you arrive at {{start_loc}}  or 'No, I changed my plans' if needed.\"\n        }\n    }\n}",
+									"raw": "{\n    \"friendly_name\": \"owl_store_scene_2_1_curated_items\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Twill\",\n        \"discount\": \"30\"\n    },\n    \"types\": {\n        \"twilio/carousel\": {\n            \"body\": \"Hey {{name}}! Here are your hand-picked items for this sale — {{discount}}% off today only.\",\n            \"cards\": [\n                {\n                    \"title\": \"Owl Store Signature Hoodie\",\n                    \"body\": \"Heavyweight brushed fleece. Fits every season.\",\n                    \"media\": \"https://forge-assets-5378.twil.io/owl_store/carousel-hoodie-front.jpg\",\n                    \"actions\": [\n                        {\n                            \"type\": \"QUICK_REPLY\",\n                            \"id\": \"btn_2_1_hoodie\",\n                            \"title\": \"Add to bag\"\n                        }\n                    ]\n                },\n                {\n                    \"title\": \"Owl Store Trail Shoe\",\n                    \"body\": \"Lightweight grip sole. Ready for anything.\",\n                    \"media\": \"https://forge-assets-5378.twil.io/owl_store/carousel-shoes-front.jpg\",\n                    \"actions\": [\n                        {\n                            \"type\": \"QUICK_REPLY\",\n                            \"id\": \"btn_2_1_shoes\",\n                            \"title\": \"Add to bag\"\n                        }\n                    ]\n                }\n            ]\n        },\n        \"twilio/text\": {\n            \"body\": \"Hey {{name}}! Here are your hand-picked items for this sale — {{discount}}% off today only.\\n\\n1. Owl Store Signature Hoodie — Heavyweight brushed fleece. Fits every season.\\n2. Owl Store Trail Shoe — Lightweight grip sole. Ready for anything.\\n\\nReply HOODIE or SHOES to add an item to your bag.\"\n        }\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -424,15 +215,23 @@
 								"url": {
 									"raw": "https://content.twilio.com/v1/Content",
 									"protocol": "https",
-									"host": [
-										"content",
-										"twilio",
-										"com"
-									],
-									"path": [
-										"v1",
-										"Content"
-									]
+									"host": ["content", "twilio", "com"],
+									"path": ["v1", "Content"]
+								},
+								"description": "Create a Carousel content template for Scene 2 using the Twilio Content API. On success, the test script automatically stores the new SID in the CONTENT_SID_SCENE_2_1 environment variable."
+							},
+							"response": []
+						},
+						{
+							"name": "Review curated items content template",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://content.twilio.com/v1/Content/{{CONTENT_SID_SCENE_2_1}}",
+									"protocol": "https",
+									"host": ["content", "twilio", "com"],
+									"path": ["v1", "Content", "{{CONTENT_SID_SCENE_2_1}}"]
 								}
 							},
 							"response": []
@@ -440,17 +239,15 @@
 					]
 				},
 				{
-					"name": "Scene 2 - Send reminder",
+					"name": "Scene 2 - Send curated items",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
 								"exec": [
 									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
-									"    \"name\": \"Alex\",",
-									"    \"start_loc\": \"Main St. Bus Stop\",",
-									"    \"bus_number\": \"1B\",",
-									"    \"bus_bay\": \"1\"",
+									"    \"name\": \"Twill\",",
+									"    \"discount\": \"30\"",
 									"}));"
 								],
 								"type": "text/javascript",
@@ -489,23 +286,15 @@
 						"url": {
 							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
 							"protocol": "https",
-							"host": [
-								"api",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"2010-04-01",
-								"Accounts",
-								"{{ACCOUNT_SID}}",
-								"Messages.json"
-							]
-						}
+							"host": ["api", "twilio", "com"],
+							"path": ["2010-04-01", "Accounts", "{{ACCOUNT_SID}}", "Messages.json"]
+						},
+						"description": "Send the curated items Carousel template. Falls back to SMS text if the recipient's device does not support RCS."
 					},
 					"response": []
 				}
 			],
-			"description": "**Bus boarding:**\n\nAlex is already on their way to the Bus Stop. Alex's reminder time arrives.\n\nLet's create one more template. This will be a Card without media and with action buttons."
+			"description": "**Curated sale items:**\n\nOwl Store sends Twill a personalised Carousel of hand-picked products on sale. Created via the Twilio Content API."
 		},
 		{
 			"name": "Scene 3",
@@ -514,7 +303,7 @@
 					"name": "Scene 3 Content Templates",
 					"item": [
 						{
-							"name": "Create Content Template - Ferry transfer",
+							"name": "Create Content Template - Closest store",
 							"event": [
 								{
 									"listen": "test",
@@ -528,8 +317,6 @@
 											"    pm.response.to.be.json;",
 											"    const responseJson = pm.response.json();",
 											"    pm.expect(responseJson).to.have.property('sid');",
-											"    ",
-											"    // Store the sid in environment variable",
 											"    pm.environment.set(\"CONTENT_SID_SCENE_3_1\", responseJson.sid);",
 											"});"
 										],
@@ -543,7 +330,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"friendly_name\": \"twilitransit_scene_3_1_ferry_transfer\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Alex\",\n        \"transfer_window_min\": \"12\",\n        \"qrcode_image\": \"qrcode.jpg\",\n        \"ferry_url\": \"https://maps.app.goo.gl/PJr3ydjoB8vSErCR7\"\n    },\n    \"types\": {\n        \"twilio/card\": {\n            \"title\": \"⛴️ Ferry transfer for {{name}}\",\n            \"body\": \"You're almost at the ferry terminal. Transfer window is {{transfer_window_min}} minutes.\",\n            \"media\": [\n                \"https://forge-assets-5378.twil.io/twilitransit/{{qrcode_image}}\"\n            ],\n            \"subtitle\": \"Scan the QR code at the Ferry entrance gate.\",\n            \"actions\": [\n                {\n                    \"type\": \"URL\",\n                    \"id\": \"btn_3_1_view_directions\",\n                    \"title\": \"Directions to Ferry\",\n                    \"url\": \"{{ferry_url}}\"\n                }\n            ]\n        },\n        \"twilio/text\": {\n            \"body\": \"You're almost at the ferry terminal. Transfer window is {{transfer_window_min}} minutes.\\n\\nBoarding pass: https://forge-assets-5378.twil.io/twilitransit/{{qrcode_image}}\\n\\nDirections to Ferry: {{ferry_url}}\"\n        }\n    }\n}",
+									"raw": "{\n    \"friendly_name\": \"owl_store_scene_3_1_closest_store\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Twill\",\n        \"store_name\": \"Owl Store SIGNAL\",\n        \"store_address\": \"375 Beale St, San Francisco, CA 94105\",\n        \"directions_url\": \"https://maps.app.goo.gl/tWMVXbAoktdRHDEy7\"\n    },\n    \"types\": {\n        \"twilio/card\": {\n            \"title\": \"📍 Your nearest Owl Store\",\n            \"body\": \"{{store_name}} is ready for you, {{name}}.\\n\\n{{store_address}}\",\n            \"media\": [\n                \"https://forge-assets-5378.twil.io/owl_store/rich-card-sales.jpg\"\n            ],\n            \"actions\": [\n                {\n                    \"type\": \"URL\",\n                    \"id\": \"btn_3_1_directions\",\n                    \"title\": \"Get directions\",\n                    \"url\": \"{{directions_url}}\"\n                }\n            ]\n        },\n        \"twilio/text\": {\n            \"body\": \"{{name}}, your nearest Owl Store is {{store_name}} at {{store_address}}.\\n\\nDirections: {{directions_url}}\"\n        }\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -553,15 +340,23 @@
 								"url": {
 									"raw": "https://content.twilio.com/v1/Content",
 									"protocol": "https",
-									"host": [
-										"content",
-										"twilio",
-										"com"
-									],
-									"path": [
-										"v1",
-										"Content"
-									]
+									"host": ["content", "twilio", "com"],
+									"path": ["v1", "Content"]
+								},
+								"description": "Create a Card content template for Scene 3 using the Twilio Content API. The card includes a store image and a URL action button for directions. On success, the test script stores the SID in CONTENT_SID_SCENE_3_1."
+							},
+							"response": []
+						},
+						{
+							"name": "Review closest store content template",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://content.twilio.com/v1/Content/{{CONTENT_SID_SCENE_3_1}}",
+									"protocol": "https",
+									"host": ["content", "twilio", "com"],
+									"path": ["v1", "Content", "{{CONTENT_SID_SCENE_3_1}}"]
 								}
 							},
 							"response": []
@@ -569,17 +364,17 @@
 					]
 				},
 				{
-					"name": "Scene 3 - Send Ferry instructions",
+					"name": "Scene 3 - Send closest store",
 					"event": [
 						{
 							"listen": "prerequest",
 							"script": {
 								"exec": [
 									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
-									"    \"name\": \"Alex\",",
-									"    \"transfer_window_min\": \"12\",",
-									"    \"qrcode_image\": \"qrcode.jpg\",",
-									"    \"ferry_url\": \"https://maps.app.goo.gl/PJr3ydjoB8vSErCR7\"",
+									"    \"name\": \"Twill\",",
+									"    \"store_name\": \"Owl Store SIGNAL\",",
+									"    \"store_address\": \"375 Beale St, San Francisco, CA 94105\",",
+									"    \"directions_url\": \"https://maps.app.goo.gl/tWMVXbAoktdRHDEy7\"",
 									"}));"
 								],
 								"type": "text/javascript",
@@ -618,284 +413,15 @@
 						"url": {
 							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
 							"protocol": "https",
-							"host": [
-								"api",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"2010-04-01",
-								"Accounts",
-								"{{ACCOUNT_SID}}",
-								"Messages.json"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"description": "**Ferry transfer:**\n\nAs Alex's bus journey is about to end, and Alex nears the Ferry terminal, Alex receives a boarding pass QR code for the Ferry, and directions from the bus to the Ferry docks."
-		},
-		{
-			"name": "Scene 4",
-			"item": [
-				{
-					"name": "Scene 4 Content Templates",
-					"item": [
-						{
-							"name": "Create Content Template - Metro transfer",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successful\", function () {",
-											"    pm.response.to.be.success;",
-											"});",
-											"",
-											"pm.test(\"Response has valid JSON with sid\", function () {",
-											"    pm.response.to.be.json;",
-											"    const responseJson = pm.response.json();",
-											"    pm.expect(responseJson).to.have.property('sid');",
-											"    ",
-											"    // Store the sid in environment variable",
-											"    pm.environment.set(\"CONTENT_SID_SCENE_4_1\", responseJson.sid);",
-											"});"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"friendly_name\": \"twilitransit_scene_4_1_metro_transfer\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Alex\",\n        \"dest\": \"Signal City Market\",\n        \"dest_image\": \"loc-signal-city-market.jpg\",\n        \"platform\": \"2\",\n        \"transfer_window_min\": \"6\",\n        \"loc_name\": \"Riverside Station\",\n        \"loc_image\": \"loc-riverside-station.jpg\",\n        \"route_map_url\": \"https://forge-assets-5378.twil.io/twilitransit/routemap.jpg\",\n        \"bikeshare_url\": \"https://en.wikipedia.org/wiki/Bicycle-sharing_system\"\n    },\n    \"types\": {\n        \"twilio/carousel\": {\n            \"body\": \"Your train will be arrive on Platform #{{platform}}\",\n            \"cards\": [\n                {\n                    \"title\": \"🚇 Metro transfer towards {{dest}}\",\n                    \"body\": \"You're arriving at {{loc_name}}. The connecting train will leave from Platform #{{platform}} in {{transfer_window_min}} minutes.\",\n                    \"media\": \"https://forge-assets-5378.twil.io/twilitransit/{{loc_image}}\",\n                    \"actions\": [\n                        {\n                            \"type\": \"URL\",\n                            \"id\": \"btn_4_1_route_map\",\n                            \"title\": \"View route map\",\n                            \"url\": \"{{route_map_url}}\"\n                        }\n                    ]\n                },\n                {\n                    \"title\": \"🚴🏽 Rent a bike at {{dest}}\",\n                    \"body\": \"Explore {{dest}} on two wheels using TwiliTransit Bikeshare.\",\n                    \"media\": \"https://forge-assets-5378.twil.io/twilitransit/{{dest_image}}\",\n                    \"actions\": [\n                        {\n                            \"type\": \"URL\",\n                            \"id\": \"btn_4_1_rent_bike\",\n                            \"title\": \"Book your bike\",\n                            \"url\": \"{{bikeshare_url}}\"\n                        }\n                    ]\n                }\n            ]\n        },\n        \"twilio/text\": {\n            \"body\": \"You're arriving at {{loc_name}}. The connecting train to {{dest}} will leave from Platform #{{platform}} in {{transfer_window_min}} minutes.\\n\\nRoute map: {{route_map_url}}\\n\\nBook bikeshare at destination: {{bikeshare_url}}\"\n        }\n    }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://content.twilio.com/v1/Content",
-									"protocol": "https",
-									"host": [
-										"content",
-										"twilio",
-										"com"
-									],
-									"path": [
-										"v1",
-										"Content"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Scene 4 - Send Metro instructions",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
-									"    \"name\": \"Alex\",",
-									"    \"dest\": \"Signal City Market\",",
-									"    \"dest_image\": \"loc-signal-city-market.jpg\",",
-									"    \"platform\": \"2\",",
-									"    \"transfer_window_min\": \"6\",",
-									"    \"loc_name\": \"Riverside Station\",",
-									"    \"loc_image\": \"loc-riverside-station.jpg\",",
-									"    \"route_map_url\": \"https://forge-assets-5378.twil.io/twilitransit/routemap.jpg\",",
-									"    \"bikeshare_url\": \"https://en.wikipedia.org/wiki/Bicycle-sharing_system\"",
-									"}));"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "From",
-									"value": "{{MESSAGING_SERVICE_SID}}",
-									"type": "text"
-								},
-								{
-									"key": "To",
-									"value": "{{TO}}",
-									"type": "text"
-								},
-								{
-									"key": "ContentSid",
-									"value": "{{CONTENT_SID_SCENE_4_1}}",
-									"type": "text"
-								},
-								{
-									"key": "ContentVariables",
-									"value": "{{CONTENT_VARIABLES}}",
-									"type": "text"
-								}
-							]
+							"host": ["api", "twilio", "com"],
+							"path": ["2010-04-01", "Accounts", "{{ACCOUNT_SID}}", "Messages.json"]
 						},
-						"url": {
-							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
-							"protocol": "https",
-							"host": [
-								"api",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"2010-04-01",
-								"Accounts",
-								"{{ACCOUNT_SID}}",
-								"Messages.json"
-							]
-						}
+						"description": "Send the closest store Card template with a one-tap directions button."
 					},
 					"response": []
 				}
 			],
-			"description": "**Metro transfer:**\n\nAs Alex's ferry is about to dock at Riverside Station, Alex receives directions to the Metro train that will take them to Signal City Market, along with option to book rideshare."
-		},
-		{
-			"name": "Scene 5",
-			"item": [
-				{
-					"name": "Scene 5 Content Templates",
-					"item": [
-						{
-							"name": "Create Content Template - Trip summary",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successful\", function () {",
-											"    pm.response.to.be.success;",
-											"});",
-											"",
-											"pm.test(\"Response has valid JSON with sid\", function () {",
-											"    pm.response.to.be.json;",
-											"    const responseJson = pm.response.json();",
-											"    pm.expect(responseJson).to.have.property('sid');",
-											"    ",
-											"    // Store the sid in environment variable",
-											"    pm.environment.set(\"CONTENT_SID_SCENE_5_1\", responseJson.sid);",
-											"});"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"friendly_name\": \"twilitransit_scene_4_1_metro_transfer\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Alex\",\n        \"trip_summary_pdf\": \"trip-summary.pdf\"\n    },\n    \"types\": {\n        \"twilio/card\": {\n            \"title\": \"🏁 Trip summary for {{name}}\",\n            \"body\": \"You are almost at your destination. Hope you had a pleasant journey.\\n\\nHow was your experience?\",\n            \"media\": [\n                \"https://forge-assets-5378.twil.io/twilitransit/{{trip_summary_pdf}}\"\n            ],\n            \"actions\": [\n                {\n                    \"type\": \"QUICK_REPLY\",\n                    \"id\": \"btn_5_1_excellent\",\n                    \"title\": \"Excellent\"\n                },\n                {\n                    \"type\": \"QUICK_REPLY\",\n                    \"id\": \"btn_5_1_average\",\n                    \"title\": \"Average\"\n                },\n                {\n                    \"type\": \"QUICK_REPLY\",\n                    \"id\": \"btn_5_1_poor\",\n                    \"title\": \"Poor\"\n                }\n            ]\n        },\n        \"twilio/text\": {\n            \"body\": \"You are almost at your destination. Hope you had a pleasant journey.\\n\\nTrip summary: https://forge-assets-5378.twil.io/twilitransit/{{trip_summary_pdf}}\\n\\nHow was your experience? Reply with Excellent, Average or Poor.\"\n        }\n    }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://content.twilio.com/v1/Content",
-									"protocol": "https",
-									"host": [
-										"content",
-										"twilio",
-										"com"
-									],
-									"path": [
-										"v1",
-										"Content"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Scene 5 - Send trip summary",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
-									"    \"name\": \"Alex\",",
-									"    \"trip_summary_pdf\": \"trip-summary.pdf\"",
-									"}));"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "From",
-									"value": "{{MESSAGING_SERVICE_SID}}",
-									"type": "text"
-								},
-								{
-									"key": "To",
-									"value": "{{TO}}",
-									"type": "text"
-								},
-								{
-									"key": "ContentSid",
-									"value": "{{CONTENT_SID_SCENE_5_1}}",
-									"type": "text"
-								},
-								{
-									"key": "ContentVariables",
-									"value": "{{CONTENT_VARIABLES}}",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
-							"protocol": "https",
-							"host": [
-								"api",
-								"twilio",
-								"com"
-							],
-							"path": [
-								"2010-04-01",
-								"Accounts",
-								"{{ACCOUNT_SID}}",
-								"Messages.json"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"description": "**Journey wrap-up:**\n\nAlex is about to reach Signal City Market, and receives the trip summary and receipt as a final message."
+			"description": "**Closest store:**\n\nOwl Store sends Twill a Rich Card with the nearest store location and a one-tap directions button. Created via the Twilio Content API."
 		}
 	],
 	"auth": {
@@ -919,9 +445,7 @@
 			"script": {
 				"type": "text/javascript",
 				"packages": {},
-				"exec": [
-					""
-				]
+				"exec": [""]
 			}
 		},
 		{
@@ -929,9 +453,7 @@
 			"script": {
 				"type": "text/javascript",
 				"packages": {},
-				"exec": [
-					""
-				]
+				"exec": [""]
 			}
 		}
 	]

@@ -36,13 +36,13 @@ app.post('/webhook/incoming', (req, res) => {
 // Health check and server start
 // --------------------------
 app.get('/', (req, res) => {
-  res.json({ 
-    status: 'TwiliTransit API is running',
+  res.json({
+    status: 'Owl Store API is running',
     timestamp: new Date().toISOString()
   });
 });
 
 // Start server
 app.listen(port, () => {
-  console.log(`TwiliTransit server running on port ${port}`);
+  console.log(`Owl Store server running on port ${port}`);
 });
