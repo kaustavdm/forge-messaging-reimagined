@@ -1,505 +1,643 @@
 {
-	"info": {
-		"_postman_id": "55972bd7-8d2d-4c54-b864-a9a58d4c8362",
-		"name": "Twilio Forge: Messaging Reimagined",
-		"description": "Follow-along Postman Collection for the requests sent as part of the Twilio Forge: Messaging Reimagined workshop at SIGNAL San Francisco 2026.\n\n## Setup\n\n- You will need an activated Twilio account.\n    \n- Create an [API Key from the Twilio Console](https://www.twilio.com/docs/iam/api-keys/keys-in-console). Consider creating a Restricted key with only the service you need. You can alternately create an [API key using the REST API](https://www.twilio.com/docs/iam/api-keys/key-resource-v1).\n    \n- Add the API Key and Secret to the environment.\n    \n- Get the Account SID from the Twilio Console homepage and add it to the environment.\n    \n- Follow the [Runbook's setup instructions](https://github.com/kaustavdm/forge-messaging-reimagined/blob/main/RUNBOOK.md) and create additional resources.\n    \n\n### Story\n\nOwl Store detects that Twill is a VIP customer. An automated flow sends Twill a personalised sale alert, curated product recommendations, and directions to the nearest store — all via RCS.",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "43445318"
-	},
-	"item": [
-		{
-			"name": "Prequel",
-			"item": [
-				{
-					"name": "Your First RCS Message",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "From",
-									"value": "{{MESSAGING_SERVICE_SID}}",
-									"description": "Messaging service SID beginning with `MG`",
-									"type": "text"
-								},
-								{
-									"key": "To",
-									"value": "{{TO}}",
-									"description": "Phone number to send message to",
-									"type": "text"
-								},
-								{
-									"key": "Body",
-									"value": "Hi from the Twilio Forge session on RCS!",
-									"description": "Sample body text",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
-							"protocol": "https",
-							"host": ["api", "twilio", "com"],
-							"path": ["2010-04-01", "Accounts", "{{ACCOUNT_SID}}", "Messages.json"]
-						},
-						"description": "Send an RCS message with a message string in the `Body`.\n\nUsing a Messaging Service with an RCS Sender attached and SMS fallback configured, this request will send the simple text as RCS if the receiving phone supports RCS, otherwise it will be delivered as SMS."
-					},
-					"response": []
-				},
-				{
-					"name": "Your First RCS Message - without fallback",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "From",
-									"value": "{{MESSAGING_SERVICE_SID}}",
-									"description": "Messaging service SID beginning with `MG`",
-									"type": "text"
-								},
-								{
-									"key": "To",
-									"value": "rcs:{{TO}}",
-									"description": "Phone number prefixed with `rcs:` to disable SMS fallback",
-									"type": "text"
-								},
-								{
-									"key": "Body",
-									"value": "Hi from the Twilio Forge session on RCS! This time without SMS fallback.",
-									"description": "Sample body text",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
-							"protocol": "https",
-							"host": ["api", "twilio", "com"],
-							"path": ["2010-04-01", "Accounts", "{{ACCOUNT_SID}}", "Messages.json"]
-						},
-						"description": "Even while using a Messaging Service with SMS fallback configured, you can explicitly disable fallback by prefixing the phone number in the `To` field with `rcs:`."
-					},
-					"response": []
-				}
-			],
-			"description": "The first step to trigger after setting up an RCS Sender, adding it to a Messaging Service, and adding an SMS fallback."
-		},
-		{
-			"name": "Scene 1",
-			"item": [
-				{
-					"name": "Scene 1 Content Templates",
-					"item": [
-						{
-							"name": "Create Content Template - VIP alert (backup)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successful\", function () {",
-											"    pm.response.to.be.success;",
-											"});",
-											"",
-											"pm.test(\"Response has valid JSON with sid\", function () {",
-											"    pm.response.to.be.json;",
-											"    const responseJson = pm.response.json();",
-											"    pm.expect(responseJson).to.have.property('sid');",
-											"    pm.environment.set(\"CONTENT_SID_SCENE_1_1\", responseJson.sid);",
-											"});"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"friendly_name\": \"owl_store_scene_1_1_vip_alert\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Twill\",\n        \"discount\": \"30\"\n    },\n    \"types\": {\n        \"twilio/text\": {\n            \"body\": \"Hey {{name}}! 🦉 You're a VIP at Owl Store.\\n\\nOur biggest sale of the year just launched — {{discount}}% off your curated picks. For today only.\"\n        }\n    }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://content.twilio.com/v1/Content",
-									"protocol": "https",
-									"host": ["content", "twilio", "com"],
-									"path": ["v1", "Content"]
-								},
-								"description": "Backup request to create the Scene 1 VIP alert Text template via the Content API. Use this if you were unable to create the template in the Console. On success, the test script automatically stores the SID in CONTENT_SID_SCENE_1_1."
-							},
-							"response": []
-						},
-						{
-							"name": "Review VIP alert content template",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "https://content.twilio.com/v1/Content/{{CONTENT_SID_SCENE_1_1}}",
-									"protocol": "https",
-									"host": ["content", "twilio", "com"],
-									"path": ["v1", "Content", "{{CONTENT_SID_SCENE_1_1}}"]
-								},
-								"description": "Fetch the content template created in the Console for Scene 1 to confirm it is set up correctly. Update the environment variable CONTENT_SID_SCENE_1_1 with the SID shown in the Content Template Builder."
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Scene 1 - Send VIP sale alert",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
-									"    name: \"Twill\",",
-									"    discount: \"30\"",
-									"}));"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "From",
-									"value": "{{MESSAGING_SERVICE_SID}}",
-									"type": "text"
-								},
-								{
-									"key": "To",
-									"value": "rcs:{{TO}}",
-									"description": "Send for RCS only — no SMS fallback",
-									"type": "text"
-								},
-								{
-									"key": "ContentSid",
-									"value": "{{CONTENT_SID_SCENE_1_1}}",
-									"type": "text"
-								},
-								{
-									"key": "ContentVariables",
-									"value": "{{CONTENT_VARIABLES}}",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
-							"protocol": "https",
-							"host": ["api", "twilio", "com"],
-							"path": ["2010-04-01", "Accounts", "{{ACCOUNT_SID}}", "Messages.json"]
-						},
-						"description": "Send the VIP sale alert Text template. Uses `rcs:` prefix to send RCS-only, since this is a lead-in message before the Carousel and Carousel does not support a Body field in RCS."
-					},
-					"response": []
-				}
-			],
-			"description": "**VIP detection:**\n\nOwl Store detects that Twill is a VIP customer. Twill receives a personalised sale alert via RCS.\n\nThe Text content template is created in the Twilio Console Content Template Builder in this scene."
-		},
-		{
-			"name": "Scene 2",
-			"item": [
-				{
-					"name": "Scene 2 Content Templates",
-					"item": [
-						{
-							"name": "Create Content Template - Curated items",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successful\", function () {",
-											"    pm.response.to.be.success;",
-											"});",
-											"",
-											"pm.test(\"Response has valid JSON with sid\", function () {",
-											"    pm.response.to.be.json;",
-											"    const responseJson = pm.response.json();",
-											"    pm.expect(responseJson).to.have.property('sid');",
-											"    pm.environment.set(\"CONTENT_SID_SCENE_2_1\", responseJson.sid);",
-											"});"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"friendly_name\": \"owl_store_scene_2_1_curated_items\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Twill\",\n        \"discount\": \"30\"\n    },\n    \"types\": {\n        \"twilio/carousel\": {\n            \"body\": \"Hey {{name}}! Here are your hand-picked items for this sale — {{discount}}% off today only.\",\n            \"cards\": [\n                {\n                    \"title\": \"Owl Store Signature Hoodie\",\n                    \"body\": \"Heavyweight brushed fleece. Fits every season.\",\n                    \"media\": \"https://forge-assets-5378.twil.io/owl_store/carousel-hoodie-front.jpg\",\n                    \"actions\": [\n                        {\n                            \"type\": \"QUICK_REPLY\",\n                            \"id\": \"btn_2_1_hoodie\",\n                            \"title\": \"Add to bag\"\n                        }\n                    ]\n                },\n                {\n                    \"title\": \"Owl Store Trail Shoe\",\n                    \"body\": \"Lightweight grip sole. Ready for anything.\",\n                    \"media\": \"https://forge-assets-5378.twil.io/owl_store/carousel-shoes-front.jpg\",\n                    \"actions\": [\n                        {\n                            \"type\": \"QUICK_REPLY\",\n                            \"id\": \"btn_2_1_shoes\",\n                            \"title\": \"Add to bag\"\n                        }\n                    ]\n                }\n            ]\n        },\n        \"twilio/text\": {\n            \"body\": \"Hey {{name}}! Here are your hand-picked items for this sale — {{discount}}% off today only.\\n\\n1. Owl Store Signature Hoodie — Heavyweight brushed fleece. Fits every season.\\n2. Owl Store Trail Shoe — Lightweight grip sole. Ready for anything.\\n\\nReply HOODIE or SHOES to add an item to your bag.\"\n        }\n    }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://content.twilio.com/v1/Content",
-									"protocol": "https",
-									"host": ["content", "twilio", "com"],
-									"path": ["v1", "Content"]
-								},
-								"description": "Create a Carousel content template for Scene 2 using the Twilio Content API. On success, the test script automatically stores the new SID in the CONTENT_SID_SCENE_2_1 environment variable."
-							},
-							"response": []
-						},
-						{
-							"name": "Review curated items content template",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "https://content.twilio.com/v1/Content/{{CONTENT_SID_SCENE_2_1}}",
-									"protocol": "https",
-									"host": ["content", "twilio", "com"],
-									"path": ["v1", "Content", "{{CONTENT_SID_SCENE_2_1}}"]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Scene 2 - Send curated items",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
-									"    \"name\": \"Twill\",",
-									"    \"discount\": \"30\"",
-									"}));"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "From",
-									"value": "{{MESSAGING_SERVICE_SID}}",
-									"type": "text"
-								},
-								{
-									"key": "To",
-									"value": "{{TO}}",
-									"type": "text"
-								},
-								{
-									"key": "ContentSid",
-									"value": "{{CONTENT_SID_SCENE_2_1}}",
-									"type": "text"
-								},
-								{
-									"key": "ContentVariables",
-									"value": "{{CONTENT_VARIABLES}}",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
-							"protocol": "https",
-							"host": ["api", "twilio", "com"],
-							"path": ["2010-04-01", "Accounts", "{{ACCOUNT_SID}}", "Messages.json"]
-						},
-						"description": "Send the curated items Carousel template. Falls back to SMS text if the recipient's device does not support RCS."
-					},
-					"response": []
-				}
-			],
-			"description": "**Curated sale items:**\n\nOwl Store sends Twill a personalised Carousel of hand-picked products on sale. Created via the Twilio Content API."
-		},
-		{
-			"name": "Scene 3",
-			"item": [
-				{
-					"name": "Scene 3 Content Templates",
-					"item": [
-						{
-							"name": "Create Content Template - Closest store",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Request is successful\", function () {",
-											"    pm.response.to.be.success;",
-											"});",
-											"",
-											"pm.test(\"Response has valid JSON with sid\", function () {",
-											"    pm.response.to.be.json;",
-											"    const responseJson = pm.response.json();",
-											"    pm.expect(responseJson).to.have.property('sid');",
-											"    pm.environment.set(\"CONTENT_SID_SCENE_3_1\", responseJson.sid);",
-											"});"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"friendly_name\": \"owl_store_scene_3_1_closest_store\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Twill\",\n        \"store_name\": \"Owl Store SIGNAL\",\n        \"store_address\": \"375 Beale St, San Francisco, CA 94105\",\n        \"directions_url\": \"https://maps.app.goo.gl/tWMVXbAoktdRHDEy7\"\n    },\n    \"types\": {\n        \"twilio/card\": {\n            \"title\": \"📍 Your nearest Owl Store\",\n            \"body\": \"{{store_name}} is ready for you, {{name}}.\\n\\n{{store_address}}\",\n            \"media\": [\n                \"https://forge-assets-5378.twil.io/owl_store/rich-card-sales.jpg\"\n            ],\n            \"actions\": [\n                {\n                    \"type\": \"URL\",\n                    \"id\": \"btn_3_1_directions\",\n                    \"title\": \"Get directions\",\n                    \"url\": \"{{directions_url}}\"\n                }\n            ]\n        },\n        \"twilio/text\": {\n            \"body\": \"{{name}}, your nearest Owl Store is {{store_name}} at {{store_address}}.\\n\\nDirections: {{directions_url}}\"\n        }\n    }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "https://content.twilio.com/v1/Content",
-									"protocol": "https",
-									"host": ["content", "twilio", "com"],
-									"path": ["v1", "Content"]
-								},
-								"description": "Create a Card content template for Scene 3 using the Twilio Content API. The card includes a store image and a URL action button for directions. On success, the test script stores the SID in CONTENT_SID_SCENE_3_1."
-							},
-							"response": []
-						},
-						{
-							"name": "Review closest store content template",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "https://content.twilio.com/v1/Content/{{CONTENT_SID_SCENE_3_1}}",
-									"protocol": "https",
-									"host": ["content", "twilio", "com"],
-									"path": ["v1", "Content", "{{CONTENT_SID_SCENE_3_1}}"]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "Scene 3 - Send closest store",
-					"event": [
-						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
-									"    \"name\": \"Twill\",",
-									"    \"store_name\": \"Owl Store SIGNAL\",",
-									"    \"store_address\": \"375 Beale St, San Francisco, CA 94105\",",
-									"    \"directions_url\": \"https://maps.app.goo.gl/tWMVXbAoktdRHDEy7\"",
-									"}));"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "From",
-									"value": "{{MESSAGING_SERVICE_SID}}",
-									"type": "text"
-								},
-								{
-									"key": "To",
-									"value": "{{TO}}",
-									"type": "text"
-								},
-								{
-									"key": "ContentSid",
-									"value": "{{CONTENT_SID_SCENE_3_1}}",
-									"type": "text"
-								},
-								{
-									"key": "ContentVariables",
-									"value": "{{CONTENT_VARIABLES}}",
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
-							"protocol": "https",
-							"host": ["api", "twilio", "com"],
-							"path": ["2010-04-01", "Accounts", "{{ACCOUNT_SID}}", "Messages.json"]
-						},
-						"description": "Send the closest store Card template with a one-tap directions button."
-					},
-					"response": []
-				}
-			],
-			"description": "**Closest store:**\n\nOwl Store sends Twill a Rich Card with the nearest store location and a one-tap directions button. Created via the Twilio Content API."
-		}
-	],
-	"auth": {
-		"type": "basic",
-		"basic": [
-			{
-				"key": "username",
-				"value": "{{TWILIO_API_KEY_SID}}",
-				"type": "string"
-			},
-			{
-				"key": "password",
-				"value": "{{TWILIO_API_KEY_SECRET}}",
-				"type": "string"
-			}
-		]
-	},
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"exec": [""]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"packages": {},
-				"exec": [""]
-			}
-		}
-	]
+  "info": {
+    "_postman_id": "e5331203-599a-4c8e-9298-624b26d18eee",
+    "name": "Twilio Forge: Messaging Reimagined",
+    "description": "Follow-along Postman Collection for the requests sent as part of the Twilio Forge: Messaging Reimagined workshop at SIGNAL San Francisco 2026.\n\n## Setup\n\n- You will need an activated Twilio account.\n    \n- Create an [API Key from the Twilio Console](https://www.twilio.com/docs/iam/api-keys/keys-in-console). Consider creating a Restricted key with only the service you need. You can alternately create an [API key using the REST API](https://www.twilio.com/docs/iam/api-keys/key-resource-v1).\n    \n- Add the API Key and Secret to the environment.\n    \n- Get the Account SID from the Twilio Console homepage and add it to the environment.\n    \n- Follow the [Runbook's setup instructions](https://github.com/kaustavdm/forge-messaging-reimagined/blob/main/RUNBOOK.md) and create additional resources.\n    \n\n### Story\n\nOwl Store detects that Twill is a VIP customer. An automated flow sends Twill a personalised sale alert, curated product recommendations, and delivery options — all via RCS.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "43445318"
+  },
+  "item": [
+    {
+      "name": "Prequel",
+      "item": [
+        {
+          "name": "Your First RCS Message",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "From",
+                  "value": "{{MESSAGING_SERVICE_SID}}",
+                  "description": "Messaging service SID beginning with `MG`",
+                  "type": "text"
+                },
+                {
+                  "key": "To",
+                  "value": "{{TO}}",
+                  "description": "Phone number to send message to",
+                  "type": "text"
+                },
+                {
+                  "key": "Body",
+                  "value": "Hi from the Twilio Forge session on RCS!",
+                  "description": "Sample body text",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
+              "protocol": "https",
+              "host": [
+                "api",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                "{{ACCOUNT_SID}}",
+                "Messages.json"
+              ]
+            },
+            "description": "Send an RCS message with a message string in the `Body`.\n\nUsing a Messaging Service with an RCS Sender attached and SMS fallback configured, this request will send the simple text as RCS if the receiving phone supports RCS, otherwise it will be delivered as SMS."
+          },
+          "response": []
+        },
+        {
+          "name": "Your First RCS Message - without fallback",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "From",
+                  "value": "{{MESSAGING_SERVICE_SID}}",
+                  "description": "Messaging service SID beginning with `MG`",
+                  "type": "text"
+                },
+                {
+                  "key": "To",
+                  "value": "rcs:{{TO}}",
+                  "description": "Phone number prefixed with `rcs:` to disable SMS fallback",
+                  "type": "text"
+                },
+                {
+                  "key": "Body",
+                  "value": "Hi from the Twilio Forge session on RCS! This time without SMS fallback.",
+                  "description": "Sample body text",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
+              "protocol": "https",
+              "host": [
+                "api",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                "{{ACCOUNT_SID}}",
+                "Messages.json"
+              ]
+            },
+            "description": "Even while using a Messaging Service with SMS fallback configured, you can explicitly disable fallback by prefixing the phone number in the `To` field with `rcs:`."
+          },
+          "response": []
+        }
+      ],
+      "description": "The first step to trigger after setting up an RCS Sender, adding it to a Messaging Service, and adding an SMS fallback."
+    },
+    {
+      "name": "Scene 1",
+      "item": [
+        {
+          "name": "Scene 1 Content Templates",
+          "item": [
+            {
+              "name": "Create Content Template - VIP alert (backup)",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Request is successful\", function () {",
+                      "    pm.response.to.be.success;",
+                      "});",
+                      "",
+                      "pm.test(\"Response has valid JSON with sid\", function () {",
+                      "    pm.response.to.be.json;",
+                      "    const responseJson = pm.response.json();",
+                      "    pm.expect(responseJson).to.have.property('sid');",
+                      "    pm.environment.set(\"CONTENT_SID_SCENE_1\", responseJson.sid);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"friendly_name\": \"owl_scene_1_sale\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Twill\",\n        \"discount\": \"30\"\n    },\n    \"types\": {\n        \"twilio/card\": {\n            \"title\": \"Early access to Owl Sale\",\n            \"body\": \"Hi {{name}}, we have curated items for you from our annual sale starting tomorrow.\\n\\nGet {{discount}}% discount for early orders as our VIP customer! Order now!\",\n            \"media\": [\n                \"https://forge-assets-5378.twil.io/owl_store/rich-card-sales.jpg\"\n            ],\n            \"actions\": [\n                {\n                    \"type\": \"QUICK_REPLY\",\n                    \"title\": \"Show products\",\n                    \"id\": \"btn-show-products\"\n                },\n                {\n                    \"type\": \"QUICK_REPLY\",\n                    \"title\": \"Send coupon code\",\n                    \"id\": \"btn-send-coupon\"\n                }\n            ]\n        },\n        \"twilio/text\": {\n            \"body\": \"Hi {{name}}, we have curated items for you from our annual sale starting tomorrow.\\n\\nGet {{discount}}% discount for early orders as our VIP customer! Order now!\\n\\n---\\n\\nReply 1 to see products\\nReply 2 for get your discount code\"\n        }\n    }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://content.twilio.com/v1/Content",
+                  "protocol": "https",
+                  "host": [
+                    "content",
+                    "twilio",
+                    "com"
+                  ],
+                  "path": [
+                    "v1",
+                    "Content"
+                  ]
+                },
+                "description": "Backup request to create the Scene 1 VIP alert Card template via the Content API. Use this if you were unable to create the template in the Console. On success, the test script automatically stores the SID in CONTENT_SID_SCENE_1."
+              },
+              "response": []
+            },
+            {
+              "name": "Review VIP alert content template",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://content.twilio.com/v1/Content/{{CONTENT_SID_SCENE_1}}",
+                  "protocol": "https",
+                  "host": [
+                    "content",
+                    "twilio",
+                    "com"
+                  ],
+                  "path": [
+                    "v1",
+                    "Content",
+                    "{{CONTENT_SID_SCENE_1}}"
+                  ]
+                },
+                "description": "Fetch the content template created in the Console for Scene 1 to confirm it is set up correctly. Update the environment variable CONTENT_SID_SCENE_1 with the SID shown in the Content Template Builder."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Scene 1 - Send VIP sale alert",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
+                  "    name: \"Twill\",",
+                  "    discount: \"30\"",
+                  "}));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "From",
+                  "value": "{{MESSAGING_SERVICE_SID}}",
+                  "type": "text"
+                },
+                {
+                  "key": "To",
+                  "value": "{{TO}}",
+                  "type": "text"
+                },
+                {
+                  "key": "ContentSid",
+                  "value": "{{CONTENT_SID_SCENE_1}}",
+                  "type": "text"
+                },
+                {
+                  "key": "ContentVariables",
+                  "value": "{{CONTENT_VARIABLES}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
+              "protocol": "https",
+              "host": [
+                "api",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                "{{ACCOUNT_SID}}",
+                "Messages.json"
+              ]
+            },
+            "description": "Send the VIP sale alert Text template. Uses `rcs:` prefix to send RCS-only, since this is a lead-in message before the Carousel and Carousel does not support a Body field in RCS."
+          },
+          "response": []
+        }
+      ],
+      "description": "**VIP detection:**\n\nOwl Store detects that Twill is a VIP customer. Twill receives a personalised sale alert via RCS.\n\nThe Card content template is created in the Twilio Console Content Template Builder in this scene."
+    },
+    {
+      "name": "Scene 2",
+      "item": [
+        {
+          "name": "Scene 2 Content Templates",
+          "item": [
+            {
+              "name": "Create Content Template - Show products",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Request is successful\", function () {",
+                      "    pm.response.to.be.success;",
+                      "});",
+                      "",
+                      "pm.test(\"Response has valid JSON with sid\", function () {",
+                      "    pm.response.to.be.json;",
+                      "    const responseJson = pm.response.json();",
+                      "    pm.expect(responseJson).to.have.property('sid');",
+                      "    pm.environment.set(\"CONTENT_SID_SCENE_2\", responseJson.sid);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"friendly_name\": \"owl_scene_2_products\",\n    \"language\": \"en\",\n    \"variables\": {},\n    \"types\": {\n        \"twilio/carousel\": {\n            \"body\": \"Which ones do you like?\",\n            \"cards\": [\n                {\n                    \"title\": \"Owl-Red Printed Hoodie\",\n                    \"body\": \"A comfy hoodie in our signature colour!\",\n                    \"media\": \"https://forge-assets-5378.twil.io/owl_store/rich-card-hoodie-lifestyle-1.jpg\",\n                    \"actions\": [\n                        {\n                            \"type\": \"QUICK_REPLY\",\n                            \"title\": \"Add to bag\",\n                            \"id\": \"btn-add-hoodie\"\n                        },\n                        {\n                            \"type\": \"QUICK_REPLY\",\n                            \"title\": \"Show more photos\",\n                            \"id\": \"btn-show-more-hoodie\"\n                        }\n                    ]\n                },\n                {\n                    \"title\": \"Shoes to flaunt\",\n                    \"body\": \"Owl-Red and Owl branded shoes to show-off on-stage!\",\n                    \"media\": \"https://forge-assets-5378.twil.io/owl_store/carousel-shoes-front.jpg\",\n                    \"actions\": [\n                        {\n                            \"type\": \"QUICK_REPLY\",\n                            \"title\": \"Add to bag\",\n                            \"id\": \"btn-add-shoes\"\n                        },\n                        {\n                            \"type\": \"QUICK_REPLY\",\n                            \"title\": \"Show more photos\",\n                            \"id\": \"btn-show-more-shoes\"\n                        }\n                    ]\n                }\n            ]\n        },\n        \"twilio/text\": {\n            \"body\": \"Reply 1 for Owl-Red Comfy Hoodies\\n\\nReply 2 for Owl-Red branded Shoes\"\n        }\n    }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://content.twilio.com/v1/Content",
+                  "protocol": "https",
+                  "host": [
+                    "content",
+                    "twilio",
+                    "com"
+                  ],
+                  "path": [
+                    "v1",
+                    "Content"
+                  ]
+                },
+                "description": "Create a Carousel content template for Scene 2 using the Twilio Content API. On success, the test script automatically stores the new SID in the CONTENT_SID_SCENE_2 environment variable."
+              },
+              "response": []
+            },
+            {
+              "name": "Review show products content template",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://content.twilio.com/v1/Content/{{CONTENT_SID_SCENE_2}}",
+                  "protocol": "https",
+                  "host": [
+                    "content",
+                    "twilio",
+                    "com"
+                  ],
+                  "path": [
+                    "v1",
+                    "Content",
+                    "{{CONTENT_SID_SCENE_2}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Scene 2 - Send products",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({}));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "From",
+                  "value": "{{MESSAGING_SERVICE_SID}}",
+                  "type": "text"
+                },
+                {
+                  "key": "To",
+                  "value": "{{TO}}",
+                  "type": "text"
+                },
+                {
+                  "key": "ContentSid",
+                  "value": "{{CONTENT_SID_SCENE_2}}",
+                  "type": "text"
+                },
+                {
+                  "key": "ContentVariables",
+                  "value": "{{CONTENT_VARIABLES}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
+              "protocol": "https",
+              "host": [
+                "api",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                "{{ACCOUNT_SID}}",
+                "Messages.json"
+              ]
+            },
+            "description": "Send the curated items Carousel template. Falls back to SMS text if the recipient's device does not support RCS."
+          },
+          "response": []
+        }
+      ],
+      "description": "**Curated sale items:**\n\nOwl Store sends Twill a personalised Carousel of hand-picked products on sale. Created via the Twilio Content API."
+    },
+    {
+      "name": "Scene 3",
+      "item": [
+        {
+          "name": "Scene 3 Content Templates",
+          "item": [
+            {
+              "name": "Create Content Template - Delivery options",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test(\"Request is successful\", function () {",
+                      "    pm.response.to.be.success;",
+                      "});",
+                      "",
+                      "pm.test(\"Response has valid JSON with sid\", function () {",
+                      "    pm.response.to.be.json;",
+                      "    const responseJson = pm.response.json();",
+                      "    pm.expect(responseJson).to.have.property('sid');",
+                      "    pm.environment.set(\"CONTENT_SID_SCENE_3\", responseJson.sid);",
+                      "});"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"friendly_name\": \"owl_scene_3_delivery\",\n    \"language\": \"en\",\n    \"variables\": {\n        \"name\": \"Twill\",\n        \"store_name\": \"Owl Store SIGNAL\",\n        \"store_address\": \"101 Spear St 5th floor, San Francisco, CA 94105\",\n        \"url\": \"https://maps.app.goo.gl/QUf1dE2XiDrZCdg67\"\n    },\n    \"types\": {\n        \"twilio/card\": {\n            \"title\": \"🎉 Order confirmed! Choose delivery.\",\n            \"body\": \"Pickup from our nearest store, or opt for doorstep delivery\",\n            \"media\": [\n                \"https://forge-assets-5378.twil.io/owl_store/owl-ops-complete.png\"\n            ],\n            \"actions\": [\n                {\n                    \"type\": \"URL\",\n                    \"id\": \"btn_3_directions\",\n                    \"title\": \"Store pick-up\",\n                    \"url\": \"{{url}}\"\n                },\n                {\n                    \"type\": \"QUICK_REPLY\",\n                    \"id\": \"btn_3_deliver\",\n                    \"title\": \"Doorstep delivery\",\n                    \"url\": \"{{directions_url}}\"\n                }\n            ]\n        },\n        \"twilio/text\": {\n            \"body\": \"Pickup from our nearest store, or opt for doorstep delivery.\\n\\nNearest store: {{url}}\\n\\n---\\n\\nReply '1' for pickup at store.\\n\\nReply '2' for doorstep delivery.\"\n        }\n    }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://content.twilio.com/v1/Content",
+                  "protocol": "https",
+                  "host": [
+                    "content",
+                    "twilio",
+                    "com"
+                  ],
+                  "path": [
+                    "v1",
+                    "Content"
+                  ]
+                },
+                "description": "Create a Card content template for Scene 3 using the Twilio Content API. The card includes a confirmation image and action buttons for store pick-up and doorstep delivery. On success, the test script stores the SID in CONTENT_SID_SCENE_3."
+              },
+              "response": []
+            },
+            {
+              "name": "Review delivery options content template",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "https://content.twilio.com/v1/Content/{{CONTENT_SID_SCENE_3}}",
+                  "protocol": "https",
+                  "host": [
+                    "content",
+                    "twilio",
+                    "com"
+                  ],
+                  "path": [
+                    "v1",
+                    "Content",
+                    "{{CONTENT_SID_SCENE_3}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Scene 3 - Choose delivery",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.variables.set(\"CONTENT_VARIABLES\", JSON.stringify({",
+                  "    \"name\": \"Twill\",",
+                  "    \"store_name\": \"Owl Store SIGNAL\",",
+                  "    \"store_address\": \"101 Spear St 5th floor, San Francisco, CA 94105\",",
+                  "    \"url\": \"https://maps.app.goo.gl/tWMVXbAoktdRHDEy7\"",
+                  "}));"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "From",
+                  "value": "{{MESSAGING_SERVICE_SID}}",
+                  "type": "text"
+                },
+                {
+                  "key": "To",
+                  "value": "{{TO}}",
+                  "type": "text"
+                },
+                {
+                  "key": "ContentSid",
+                  "value": "{{CONTENT_SID_SCENE_3}}",
+                  "type": "text"
+                },
+                {
+                  "key": "ContentVariables",
+                  "value": "{{CONTENT_VARIABLES}}",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "https://api.twilio.com/2010-04-01/Accounts/{{ACCOUNT_SID}}/Messages.json",
+              "protocol": "https",
+              "host": [
+                "api",
+                "twilio",
+                "com"
+              ],
+              "path": [
+                "2010-04-01",
+                "Accounts",
+                "{{ACCOUNT_SID}}",
+                "Messages.json"
+              ]
+            },
+            "description": "Send the delivery options Card template with store pick-up and doorstep delivery buttons."
+          },
+          "response": []
+        }
+      ],
+      "description": "**Delivery options:**\n\nOwl Store sends Twill a Rich Card confirming the order and presenting delivery options — store pick-up or doorstep delivery. Created via the Twilio Content API."
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{TWILIO_API_KEY_SID}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{TWILIO_API_KEY_SECRET}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
 }

@@ -4,7 +4,7 @@
 - **Focus:** Rich messaging for retail with Twilio RCS Business Messaging
 - **Tech Stack:** Twilio RCS, Content Template Builder, Content API, Messaging API, Postman
 - **Duration:** ~60 min
-- **Outcome:** A complete VIP customer messaging flow — sale alert, curated products, and store directions — delivered over RCS with SMS fallback
+- **Outcome:** A complete VIP customer messaging flow — sale alert, curated products, and delivery options — delivered over RCS with SMS fallback
 
 ---
 
@@ -39,9 +39,9 @@
 <details>
 <summary><strong>Scene details</strong></summary>
 
-1. **VIP detection** — Owl Store's system detects Twill is a VIP customer and triggers a personalised sale alert via RCS.
-2. **Curated sale items** — Twill receives a Carousel of hand-picked products — a signature hoodie and trail shoe — each with a one-tap "Add to bag" reply button.
-3. **Closest store** — Twill receives a Rich Card with the nearest Owl Store location and a one-tap "Get directions" button linking to Google Maps.
+1. **VIP detection** — Owl Store's system detects Twill is a VIP customer and triggers a personalised sale alert as a Rich Card with quick reply buttons.
+2. **Show products** — Twill taps "Show products" and receives a Carousel of curated items, each with quick reply buttons.
+3. **Delivery options** — Twill's order is confirmed and they receive a Rich Card with delivery options — store pick-up (linking to Google Maps) or doorstep delivery.
 
 </details>
 
@@ -64,8 +64,8 @@
 | --- | --------------------------------------------------------------- | -------- |
 | 1   | [Setup: RCS Sender and Messaging Service](./RUNBOOK_1_SETUP.md) | ~15 min  |
 | 2   | [Scene 1: VIP sale alert](./RUNBOOK_2_SCENE_1.md)               | ~10 min  |
-| 3   | [Scene 2: Curated sale items](./RUNBOOK_3_SCENE_2.md)           | ~15 min  |
-| 4   | [Scene 3: Closest store](./RUNBOOK_4_SCENE_3.md)                | ~15 min  |
+| 3   | [Scene 2: Show hoodies](./RUNBOOK_3_SCENE_2.md)                 | ~15 min  |
+| 4   | [Scene 3: Delivery options](./RUNBOOK_4_SCENE_3.md)             | ~15 min  |
 
 ---
 

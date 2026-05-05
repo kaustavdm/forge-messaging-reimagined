@@ -77,11 +77,37 @@ RCS Messages are sent using the [`Messages` resource](https://www.twilio.com/doc
 - Trigger **"Prequel" → "Your First RCS Message"**
   - If the `To` phone number does not support RCS, it will receive an SMS instead.
 
+<details>
+<summary>View equivalent curl command</summary>
+
+```bash
+curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$ACCOUNT_SID/Messages.json" \
+  -u "$TWILIO_API_KEY_SID:$TWILIO_API_KEY_SECRET" \
+  --data-urlencode "From=$MESSAGING_SERVICE_SID" \
+  --data-urlencode "To=$TO" \
+  --data-urlencode "Body=Hi from the Twilio Forge session on RCS!"
+```
+
+</details>
+
 > [!TIP]
 > You can also pass a [`MediaUrl` field](https://www.twilio.com/docs/messaging/api/message-resource#path-parameters) instead of `Body`. This field accepts an array of publicly available image URLs (JPEG, JPG, GIF, PNG).
 
 - Trigger **"Prequel" → "Your First RCS Message - without fallback"**
   - Note the `rcs:` prefix on the `To` field. This disables SMS fallback even when it is configured on the Messaging Service.
+
+<details>
+<summary>View equivalent curl command</summary>
+
+```bash
+curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$ACCOUNT_SID/Messages.json" \
+  -u "$TWILIO_API_KEY_SID:$TWILIO_API_KEY_SECRET" \
+  --data-urlencode "From=$MESSAGING_SERVICE_SID" \
+  --data-urlencode "To=rcs:$TO" \
+  --data-urlencode "Body=Hi from the Twilio Forge session on RCS! This time without SMS fallback."
+```
+
+</details>
 
 > [!IMPORTANT]
 > **DEMO:** Show the messages received on the test device.

@@ -1,10 +1,10 @@
-# Section 3: Scene 2 – Curated Sale Items
+# Section 3: Scene 2 – Show products
 
-[← Previous: Scene 1 – VIP Sale Alert](./RUNBOOK_2_SCENE_1.md) | [Next: Scene 3 – Closest Store →](./RUNBOOK_4_SCENE_3.md)
+[← Previous: Scene 1 – VIP Sale Alert](./RUNBOOK_2_SCENE_1.md) | [Next: Scene 3 – Delivery Options →](./RUNBOOK_4_SCENE_3.md)
 
 ---
 
-Twill has seen the sale alert. Now Owl Store sends a personalised Carousel of curated products — a signature hoodie and a trail shoe — each with a one-tap **"Add to bag"** quick reply.
+Twill tapped **"Show products"**. Owl Store responds with a Carousel of products — two cards showing the product from different angles, each with an **"Add to bag"** quick reply.
 
 In this scene, we create a **Carousel** content template using the **Twilio Content API**.
 
@@ -22,10 +22,70 @@ In this scene, we create a **Carousel** content template using the **Twilio Cont
 
 In the Postman collection:
 
-- Open **"Scene 2" → "Scene 2 Content Templates" → "Create Content Template - Curated items"**
+- Open **"Scene 2" → "Scene 2 Content Templates" → "Create Content Template - Show products"**
 - Review the JSON payload. Notice how the `types` object defines both `twilio/carousel` (for RCS) and `twilio/text` (as the SMS fallback).
 - Send the request.
-- If successful, the test script automatically sets `CONTENT_SID_SCENE_2_1` in the Postman environment.
+- If successful, the test script automatically sets `CONTENT_SID_SCENE_2` in the Postman environment.
+
+</details>
+
+<details>
+<summary>View equivalent curl command</summary>
+
+```bash
+curl -X POST https://content.twilio.com/v1/Content \
+  -u "$TWILIO_API_KEY_SID:$TWILIO_API_KEY_SECRET" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "friendly_name": "owl_scene_2_products",
+    "language": "en",
+    "variables": {},
+    "types": {
+        "twilio/carousel": {
+            "body": "Which ones do you like?",
+            "cards": [
+                {
+                    "title": "Owl-Red Printed Hoodie",
+                    "body": "A comfy hoodie in our signature colour!",
+                    "media": "https://forge-assets-5378.twil.io/owl_store/rich-card-hoodie-lifestyle-1.jpg",
+                    "actions": [
+                        {
+                            "type": "QUICK_REPLY",
+                            "title": "Add to bag",
+                            "id": "btn-add-hoodie"
+                        },
+                        {
+                            "type": "QUICK_REPLY",
+                            "title": "Show more photos",
+                            "id": "btn-show-more-hoodie"
+                        }
+                    ]
+                },
+                {
+                    "title": "Shoes to flaunt",
+                    "body": "Owl-Red and Owl branded shoes to show-off on-stage!",
+                    "media": "https://forge-assets-5378.twil.io/owl_store/carousel-shoes-front.jpg",
+                    "actions": [
+                        {
+                            "type": "QUICK_REPLY",
+                            "title": "Add to bag",
+                            "id": "btn-add-shoes"
+                        },
+                        {
+                            "type": "QUICK_REPLY",
+                            "title": "Show more photos",
+                            "id": "btn-show-more-shoes"
+                        }
+                    ]
+                }
+            ]
+        },
+        "twilio/text": {
+            "body": "Reply 1 for Owl-Red Comfy Hoodies\n\nReply 2 for Owl-Red branded Shoes"
+        }
+    }
+  }'
+```
 
 </details>
 
@@ -35,15 +95,8 @@ In the Postman collection:
 > [!TIP]
 > Notice the `twilio/text` fallback body. When a recipient's device does not support RCS, Twilio automatically delivers the `twilio/text` body as an SMS instead of the Carousel.
 
-> [!TIP]
-> Available Carousel card assets for this scene:
->
-> | Product | Images |
-> | --- | --- |
-> | Hoodie | `carousel-hoodie-front.jpg`, `carousel-hoodie-lifestyle-1.jpg`, `carousel-hoodie-lifestyle-2.jpg`, `carousel-hoodie-sleeve.jpg`, `carousel-hoodie-womens.jpg` |
-> | Shoes | `carousel-shoes-front.jpg`, `carousel-shoes-lifestyle-1.jpg`, `carousel-shoes-lifestyle-2.jpg`, `carousel-shoes-side.jpg`, `carousel-shoes-top.jpg` |
->
-> All images are available at `https://forge-assets-5378.twil.io/owl_store/<filename>`.
+> [!NOTE]
+> Carousels sent over RCS don't support the top-level `body` text — it is dropped at delivery. The card-level `body` fields are shown inside each card.
 
 ---
 
@@ -54,9 +107,22 @@ In the Postman collection:
 
 In the Postman collection:
 
-- Open **"Scene 2" → "Scene 2 - Send curated items"**
-- Review the pre-request script — the `CONTENT_VARIABLES` object maps variable names to values that are interpolated into the template at send time.
+- Open **"Scene 2" → "Scene 2 - Send products"**
+- This template has no variables, so no `ContentVariables` are needed.
 - Send the request.
+
+</details>
+
+<details>
+<summary>View equivalent curl command</summary>
+
+```bash
+curl -X POST "https://api.twilio.com/2010-04-01/Accounts/$ACCOUNT_SID/Messages.json" \
+  -u "$TWILIO_API_KEY_SID:$TWILIO_API_KEY_SECRET" \
+  --data-urlencode "From=$MESSAGING_SERVICE_SID" \
+  --data-urlencode "To=$TO" \
+  --data-urlencode "ContentSid=$CONTENT_SID_SCENE_2"
+```
 
 </details>
 
@@ -75,8 +141,7 @@ In the Postman collection:
 - [ ] Created a Carousel content template using the Twilio Content API
 - [ ] Added `QUICK_REPLY` action buttons to Carousel cards
 - [ ] Added a `twilio/text` SMS fallback to the Carousel template
-- [ ] (Optional) Explored different card image angles
 
 ---
 
-[← Previous: Scene 1 – VIP Sale Alert](./RUNBOOK_2_SCENE_1.md) | [Next: Scene 3 – Closest Store →](./RUNBOOK_4_SCENE_3.md)
+[← Previous: Scene 1 – VIP Sale Alert](./RUNBOOK_2_SCENE_1.md) | [Next: Scene 3 – Delivery Options →](./RUNBOOK_4_SCENE_3.md)
